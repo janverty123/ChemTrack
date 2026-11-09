@@ -1,0 +1,37 @@
+# Local credentials and machine-specific files
+/.local/
+.env
+.env.*
+!.env.example
+auth.json
+*.pem
+*.key
+
+# Dependencies and generated application files
+/vendor/
+/node_modules/
+/public/build/
+/public/css/filament
+/public/fonts/filament
+/public/hot
+/public/js/filament
+/storage/*.key
+/storage/logs/*
+/.phpunit.cache/
+.phpunit.result.cache
+/coverage/
+
+# Local data and exports (use synthetic examples in committed docs)
+/private/
+/backups/
+*.sql
+*.sqlite
+*.sqlite3
+
+# OS/editor/temp files
+Thumbs.db
+Desktop.ini
+.DS_Store
+*.tmp
+__pycache__/
+*.pyc
