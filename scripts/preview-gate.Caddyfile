@@ -1,0 +1,22 @@
+{
+	admin off
+	persist_config off
+	auto_https off
+}
+
+http://:8001 {
+	bind 127.0.0.1
+	@insecure header X-Forwarded-Proto http
+	redir @insecure https://{host}{uri} 308
+	header {
+		Cache-Control "private, no-store"
+		X-Robots-Tag "noindex, nofollow"
+	}
+	basic_auth bcrypt ChemTrackPreview {
+		preview {$CHEMTRACK_PREVIEW_PASSWORD_HASH}
+	}
+	reverse_proxy 127.0.0.1:8000 {
+		header_up -Authorization
+		header_up X-Forwarded-Proto https
+	}
+}

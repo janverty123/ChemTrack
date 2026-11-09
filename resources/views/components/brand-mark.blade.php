@@ -1,0 +1,1 @@
+<svg class="ct-brand-icon" viewBox="0 0 38 40" width="34" height="36" aria-hidden="true" focusable="false"><path d="m19 3 15 9v16l-15 9-15-9V12Z" fill="currentColor"/><path d="M23 13a8 8 0 1 0 0 14" fill="none" stroke="var(--ct-logo-cutout, #F7FAF8)" stroke-width="3" stroke-linecap="round"/></svg>

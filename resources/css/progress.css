@@ -1,0 +1,29 @@
+.overall-ring { width: min(100%, 260px); aspect-ratio: 1; position: relative; margin: 26px auto 20px; }
+.overall-ring>svg,.task-ring>svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring-track,.ring-fill { fill: none; stroke-width: 9; }
+.ring-track { stroke: #d9e8df; }
+.ring-fill { stroke: #115e59; stroke-linecap: round; transition: stroke-dasharray .25s ease; }
+.overall-ring-copy { position: absolute; inset: 12%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(4px, 2cqi, 6px); font-size: clamp(.7rem, 4.8cqi, .78rem); line-height: 1.25; text-align: center; }
+.overall-ring-copy strong { font-family: Manrope, Inter, sans-serif; font-size: clamp(2rem, 22cqi, 3.5rem); font-weight: 700; line-height: 1.1; letter-spacing: -.035em; font-variant-numeric: tabular-nums; }
+.overall-ring-copy small { font-size: .42em; letter-spacing: 0; }
+.overall-label-short,.overall-progress-count { display: none; }
+.overall-ring-label,.overall-ring-count { max-width: 100%; }
+.overall-progress-count { margin: -6px auto 16px; text-align: center; font-size: .76rem; line-height: 1.5; color: var(--ct-muted, #526760); font-variant-numeric: tabular-nums; }
+.cycle-switch { display: flex; width: fit-content; max-width: 100%; margin: 12px auto 0; padding: 3px; border: 1px solid #7a9087; border-radius: 100px; background: white; }
+.cycle-switch :is(a,button) { min-height: 40px; display: inline-flex; justify-content: center; align-items: center; padding: 7px 12px; border-radius: 100px; text-decoration: none; font-size: .8rem; font-weight: 600; white-space: nowrap; }
+.cycle-switch :is(a,button)[aria-current] { background: var(--ct-primary, #115e59); color: white; }
+.overall-ring .cycle-switch { gap: 0; margin: 2px auto 0; }
+.overall-ring .cycle-switch :is(a,button) { min-height: 44px; padding: 7px clamp(7px, 3cqi, 10px); font-size: clamp(.7rem, 4.8cqi, .8rem); }
+@container programme-overview (max-width: 220px) {
+    .overall-label-full,.overall-ring-count { display: none; }
+    .overall-label-short { display: inline; }
+    .overall-progress-count { display: block; }
+}
+.task-ring { position: relative; width: 50px; height: 50px; flex-shrink: 0; }
+.task-ring .ring-track,.task-ring .ring-fill { stroke-width: 3.5; }
+.task-ring>span { position: absolute; inset: 0; display: grid; place-items: center; font-size: .65rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.is-complete .task-ring>span { font-size: 1rem; }
+
+.cycle-switch button { cursor:pointer; }
+.cycle-switch button:disabled { cursor:wait; opacity:.65; }
+@media(prefers-reduced-motion:reduce) { .ring-fill { transition:none; } }
