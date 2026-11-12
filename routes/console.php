@@ -1,8 +1,11 @@
 <?php
 
-use Illuminate\Foundation\Inspiring;
-use Illuminate\Support\Facades\Artisan;
+use App\Models\SignupChallenge;
+use Illuminate\Support\Facades\Schedule;
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote');
+// Signup challenges hold a plain email address only while verification is in progress.
+// Remove abandoned and finished ones a day after they expire (requires the scheduler cron; see docs/deployment.md).
+Schedule::call(fn () => SignupChallenge::where('expires_at', '<', now()->subDay())->delete())
+    ->daily()
+    ->name('prune-signup-challenges')
+    ->withoutOverlapping();

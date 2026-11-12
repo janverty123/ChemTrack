@@ -3,6 +3,7 @@
 .env
 .env.*
 !.env.example
+!.env.production.example
 auth.json
 *.pem
 *.key
@@ -11,6 +12,7 @@ auth.json
 /vendor/
 /node_modules/
 /public/build/
+/public/storage
 /public/css/filament
 /public/fonts/filament
 /public/hot

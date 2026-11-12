@@ -66,9 +66,19 @@ class Activity extends Model
 
     public function contentVersion(): string
     {
-        $fileHash = $this->document_path && Storage::disk('local')->exists($this->document_path)
-            ? hash_file('sha256', Storage::disk('local')->path($this->document_path)) : '';
+        $documentPath = $this->document_path;
+        $fileHash = '';
+        if ($documentPath && Storage::disk('local')->exists($documentPath)) {
+            $absolutePath = Storage::disk('local')->path($documentPath);
+            // Hashing a large PDF is costly and reports call this per learner; reuse the digest
+            // within a request while the file is unchanged (same path, size and modification time).
+            $fingerprint = $absolutePath.'|'.filesize($absolutePath).'|'.filemtime($absolutePath);
+            $fileHash = self::$documentHashes[$fingerprint] ??= hash_file('sha256', $absolutePath);
+        }
 
-        return hash('sha256', ($this->content ?? '').'|'.($this->document_path ?? '').'|'.$fileHash);
+        return hash('sha256', ($this->content ?? '').'|'.($documentPath ?? '').'|'.$fileHash);
     }
+
+    /** @var array<string, string> */
+    private static array $documentHashes = [];
 }

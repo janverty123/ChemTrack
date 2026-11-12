@@ -3,7 +3,7 @@
     @forelse($reports as $report)
         @php
             $programme = $report['programme'];
-            $visibleRows = collect($report['rows'])->filter(fn ($row) => $row['cycle'] === null || (int) $row['cycle'] === $this->cycle);
+            $visibleRows = collect($report['rows'])->filter(fn ($row) => (int) $row['cycle'] === $this->cycle);
         @endphp
         <section class="teacher-panel teacher-progress-layout" aria-labelledby="student-programme-{{ $programme->id }}">
             <div class="teacher-progress-overview">
@@ -16,7 +16,7 @@
                 <a class="teacher-text-link" href="/teacher/programmes/{{ $programme->id }}/results">Programme report <span aria-hidden="true">→</span></a>
             </div>
             <div class="teacher-activity-list">
-                <div class="cycle-stages" aria-label="Required stages">@foreach($report['summary']['stages'] as $stage)<span class="teacher-state">{{ $stage['label'] }} · {{ $stage['complete'] ? 'Complete' : ($stage['configured'] ? 'Pending' : 'Not available yet') }}</span>@endforeach</div>
+                <div class="cycle-stages" aria-label="Required stages">@foreach($report['summary']['stages'] as $stage)<span class="teacher-state">{{ $stage['label'] }} · {{ $stage['complete'] ? 'Complete' : ($stage['configured'] ? 'To do' : 'Not set up') }}</span>@endforeach</div>
                 <header class="teacher-panel-heading"><h3>Cycle {{ $this->cycle }} activities</h3><span class="teacher-state">{{ $visibleRows->count() }} {{ Str::plural('activity', $visibleRows->count()) }}</span></header>
                 @forelse($visibleRows as $row)
                     <article class="teacher-activity-row">

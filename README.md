@@ -2,7 +2,7 @@
 
 ChemTrack is a chemistry remediation and progress-tracking web application for students learning at home at their own pace, with a teacher dashboard for content, assessments, progress, and research results.
 
-**Status:** student and teacher workspaces implemented locally with fictional demonstration content. Not deployed or validated for a live study. Last context update: **9 November 2026 (Asia/Manila)**.
+**Status:** deployment-ready source with a new visual identity. Not yet deployed to a host. Last context update: **12 November 2026 (Asia/Manila)**.
 
 **Latest verification (4 November):** the auth/theme refinement passed **96 application tests / 697 assertions**, **33 frontend checks**, Pint and the Vite build. Actual HTTP teacher/student sign-in/workspace/settings/report/signup/recovery checks passed. Browser viewing is disabled in Work settings, so this update has no fresh visual/mobile validation. See [auth/theme evidence](docs/development/auth-theme-refinement.md); earlier [cycle/account evidence](docs/development/cycle-accounts-settings-evidence.md) remains historical.
 
@@ -20,6 +20,8 @@ Open the [GitHub web editor](https://github.dev/janverty123/ChemTrack), sign in,
 
 | Document | Purpose |
 | --- | --- |
+| [Deployment guide](docs/deployment.md) | Host requirements, install steps, HTTPS/Cloudflare, cron and go-live checklist |
+| [Visual identity](docs/design/visual-identity.md) | Logo, colour tokens, fonts and layout principles (12 November 2026) |
 | [Auth/theme refinement](docs/development/auth-theme-refinement.md) | Light public defaults, account form interactions, signup explanation and verification limits |
 | [Cycle/account/settings evidence](docs/development/cycle-accounts-settings-evidence.md) | Implemented behavior, migration/history safeguards, checks and limits |
 | [Mail and account readiness](docs/development/mail-and-account-readiness.md) | Real sender setup, verified signup, legacy rollout and MFA access |
@@ -109,4 +111,6 @@ The “ChemTrack Recommendation” chat preferred Z.com Starter and discussed Z.
 
 After each prompt, update this README's status/date/next step as needed, synchronize [current context](docs/context/current.md), and append a concise outcome to [the session log](docs/context/session-log.md). Record durable changes in the decision log. Keep sensitive information and student records out of these files. This is a working convention enforced through `AGENTS.md`, not a background automation.
 
-**Next step:** review locally via [Teacher](http://127.0.0.1:8002/teacher) and [Settings](http://127.0.0.1:8002/settings). Configure/test an approved mail sender before real signups, supply the approved materials and Forms connection, then complete visual/phone/accessibility/load/restore checks. No hosting or deployment was performed.
+**Next step (12 November):** choose a PHP/MySQL host and follow the [deployment guide](docs/deployment.md). Create the first teacher with `php artisan chemtrack:create-teacher`, and connect a real mail sender before inviting students.
+
+**Earlier next step:** review locally via [Teacher](http://127.0.0.1:8002/teacher) and [Settings](http://127.0.0.1:8002/settings). Configure/test an approved mail sender before real signups, supply the approved materials and Forms connection, then complete visual/phone/accessibility/load/restore checks. No hosting or deployment was performed.

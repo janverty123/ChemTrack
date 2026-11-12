@@ -92,7 +92,13 @@ class SettingsController extends Controller
             $expires = now()->addMinutes(30);
             $user->forceFill(['pending_email' => $email, 'pending_email_token_hash' => hash('sha256', $token), 'pending_email_expires_at' => $expires])->save();
             $url = URL::temporarySignedRoute('settings.email.confirm', $expires, ['user' => $user->id, 'token' => $token]);
-            Notification::route('mail', $email)->notify(new ConfirmAccountEmail($url));
+            try {
+                Notification::route('mail', $email)->notify(new ConfirmAccountEmail($url));
+            } catch (\Throwable $exception) {
+                $user->forceFill(['pending_email' => null, 'pending_email_token_hash' => null, 'pending_email_expires_at' => null])->save();
+                report($exception);
+                throw ValidationException::withMessages(['email' => 'We could not send the confirmation email. Please try again later.']);
+            }
             $this->audit($user, 'email.change_requested');
         }
 
@@ -164,7 +170,7 @@ class SettingsController extends Controller
 
     public function saveAvatar(Request $request, AccountAvatar $avatar)
     {
-        $request->validate(['avatar' => ['required', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048', 'dimensions:max_width=4096,max_height=4096']]);
+        $request->validate(['avatar' => ['required', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048', 'dimensions:max_width=2400,max_height=2400']]);
         $avatar->store($request->user(), $request->file('avatar'));
 
         return redirect('/settings')->with('status', 'Photo saved.');

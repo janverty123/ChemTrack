@@ -1,2 +1,7 @@
 User-agent: *
-Disallow:
+Disallow: /learn
+Disallow: /teacher
+Disallow: /settings
+Disallow: /account
+Disallow: /register
+Disallow: /reset-password

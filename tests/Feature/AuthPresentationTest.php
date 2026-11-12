@@ -48,7 +48,8 @@ class AuthPresentationTest extends TestCase
     public function test_landing_stays_public_light_while_account_workspace_can_apply_saved_preferences(): void
     {
         $user = User::factory()->create(['preferences' => ['theme' => 'dark']]);
-        $this->actingAs($user)->get('/')->assertOk()->assertSee('const canCustomize = ! true', false);
+        $this->get('/')->assertOk()->assertSee('const canCustomize = ! true', false);
+        $this->actingAs($user)->get('/login')->assertRedirect();
         $this->get('/settings')->assertOk()->assertSee('const canCustomize = ! false', false);
         $this->assertSame('dark', $user->fresh()->preferences['theme']);
     }

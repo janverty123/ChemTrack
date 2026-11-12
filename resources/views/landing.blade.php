@@ -1,109 +1,160 @@
 @php
     $dashboardUrl = auth()->check() ? (auth()->user()->role === 'teacher' ? '/teacher' : '/learn') : '/login';
     $actionLabel = auth()->check() ? 'Open dashboard' : 'Sign in';
+    $check = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 @endphp
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="description" content="ChemTrack brings chemistry reading, checkpoints and saved learning progress together in one place.">
-    <meta name="theme-color" content="#F7FAF8">
-    <title>ChemTrack — Chemistry at your pace</title>
+    <x-head-meta description="ChemTrack is a self-paced chemistry remediation space: one module, two cycles, saved progress for students and clear reports for teachers." />
+    <title>ChemTrack — Chemistry, one clear step at a time</title>
+    <meta property="og:title" content="ChemTrack — Chemistry, one clear step at a time">
+    <meta property="og:description" content="Self-paced chemistry remediation with saved progress for students and clear reports for teachers.">
+    <meta property="og:type" content="website">
     <x-appearance :public="true" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="landing-page" data-landing>
-    <a class="landing-skip" href="#main">Skip to content</a>
-    <svg class="landing-symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <defs>
-            <symbol id="landing-water" viewBox="0 0 480 340">
-                <path d="M139 234 240 125 341 234" fill="none" stroke="currentColor" stroke-width="22" stroke-linecap="round"/>
-                <circle cx="240" cy="125" r="76" fill="#115E59"/>
-                <circle cx="125" cy="248" r="53" fill="#F7FAF8"/>
-                <circle cx="355" cy="248" r="53" fill="#F7FAF8"/>
-                <text x="240" y="150" fill="#FFFFFF" text-anchor="middle" font-size="70" font-family="Manrope, sans-serif" font-weight="600">O</text>
-                <text x="125" y="266" fill="#173C35" text-anchor="middle" font-size="50" font-family="Manrope, sans-serif" font-weight="600">H</text>
-                <text x="355" y="266" fill="#173C35" text-anchor="middle" font-size="50" font-family="Manrope, sans-serif" font-weight="600">H</text>
-            </symbol>
-            <symbol id="landing-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-        </defs>
-    </svg>
+<a class="landing-skip" href="#main">Skip to content</a>
 
-    <header class="landing-header landing-frame">
+<header class="landing-header">
+    <div class="landing-frame landing-header-inner">
         <x-brand class="landing-brand" />
-    </header>
+        <nav class="landing-nav" aria-label="Page sections">
+            <a href="#how">How it works</a>
+            <a href="#checkpoints">Checkpoints</a>
+            <a href="#teachers">For teachers</a>
+        </nav>
+        <a class="button landing-header-action" href="{{ $dashboardUrl }}">{{ $actionLabel }}</a>
+    </div>
+</header>
 
-    <button class="landing-menu-button" type="button" data-landing-menu aria-haspopup="dialog" aria-controls="landing-menu" aria-expanded="false" hidden><span class="landing-menu-word"><span>Menu</span><span aria-hidden="true">Explore</span></span><svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M2 6h14M2 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
-    <dialog id="landing-menu" class="landing-menu" aria-labelledby="landing-menu-title">
-        <div class="landing-menu-top"><h2 id="landing-menu-title">ChemTrack</h2><button type="button" data-landing-close aria-label="Close menu"><span>Close</span><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="m4 4 12 12M16 4 4 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
-        <nav aria-label="Page sections"><a href="#landing-title"><span>Back to the beginning</span></a><a href="#module"><span>Inside the module</span></a><a href="#checkpoints"><span>Checkpoints</span></a><a href="#progress"><span>Your progress</span></a><a class="landing-menu-action" href="{{ $dashboardUrl }}"><span>{{ $actionLabel }}</span><span aria-hidden="true">↗</span></a></nav>
-    </dialog>
-
-    <main id="main" class="landing-main">
-        <section class="landing-hero" aria-labelledby="landing-title">
-            <div class="landing-frame">
-            <div class="landing-module-sheet">
-                <div class="landing-hero-copy">
-                    <h1 id="landing-title">Chemistry,<br>at your pace.</h1>
-                    <p>ChemTrack keeps your module, checkpoints and saved progress together as you work through chemistry at home.</p>
-                    <a class="landing-action" href="{{ $dashboardUrl }}">{{ $actionLabel }}<svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h13m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></a><a class="landing-text-link" href="#module">Take a look inside <span aria-hidden="true">↓</span></a>
+<main id="main">
+    <section class="landing-hero" aria-labelledby="landing-title">
+        <div class="landing-frame landing-hero-grid">
+            <div class="landing-hero-copy">
+                <p class="landing-kicker"><span aria-hidden="true"></span>Chemistry remediation for learning at home</p>
+                <h1 id="landing-title">Close the gaps in chemistry, <mark>one clear step</mark> at a time.</h1>
+                <p class="landing-lead">ChemTrack guides students through their module at their own pace, saves every answer and page as they go, and gives teachers an honest picture of progress.</p>
+                <div class="landing-actions">
+                    <a class="button landing-cta" href="{{ $dashboardUrl }}">{{ $actionLabel }}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+                    <a class="secondary-button" href="#how">See how it works</a>
                 </div>
-                <figure class="landing-hero-product" data-ui aria-label="Chemistry module preview">
-                    <div class="landing-product-bar"><span class="landing-product-dot" aria-hidden="true"></span><span>Your learning space</span><span>Cycle 1</span></div>
-                    <div class="landing-hero-model"><div><h2>Inside matter</h2><p>One module. One next step.</p></div><svg class="landing-molecule" viewBox="0 0 480 340" role="img" aria-label="Water molecule: one oxygen atom and two hydrogen atoms"><use href="#landing-water"/></svg></div>
-                    <div class="landing-hero-path"><div class="landing-mini-task"><svg width="25" height="25" aria-hidden="true"><use href="#landing-check"/></svg><span>Molecules and bonds<small>Reading complete</small></span><span class="landing-mini-status">Saved</span></div><div class="landing-mini-task landing-mini-current"><span class="landing-small-ring" aria-hidden="true"></span><span>Check your understanding<small>Your next checkpoint</small></span><span aria-hidden="true">→</span></div></div>
-                    <figcaption class="landing-sr-only">Illustrative material and activity order. Your teacher supplies the actual module and cycle assignments.</figcaption>
-                </figure>
+                @guest<p class="landing-invite">Have an invitation from your teacher? <a href="/register">Create your student account</a></p>@endguest
             </div>
-            <p class="landing-hero-foot">A learning space for students. A record of progress for teachers.</p>
-            </div>
-        </section>
 
-        <section id="module" class="landing-reading landing-frame" aria-labelledby="module-title">
-            <div class="landing-section-intro"><h2 id="module-title" data-landing-reveal>Stay with the module</h2><p data-landing-reveal>Read each part, pick up where you left off, and move forward when you’re ready.</p></div>
-            <div class="landing-module-story" data-reading-scene>
-                <div class="landing-story-sticky">
-                    <div class="landing-reading-notes"><p class="landing-story-instruction">Scroll to follow a sample lesson <span aria-hidden="true">↓</span></p><ol class="landing-story-steps"><li data-story-step="reading"><h3>Read at your pace</h3><p>The page moves. Your place stays saved.</p></li><li data-story-step="complete"><h3>Finish this part</h3><p>Mark the reading complete when you are ready.</p></li><li data-story-step="checkpoint"><h3>Try the checkpoint</h3><p>Your next activity opens after confirmed completion.</p></li></ol></div>
-                    <figure class="landing-reader" data-ui>
-                        <div class="landing-reader-toolbar"><span>Chemistry module</span><span data-story-label>Reading preview</span></div>
-                        <div class="landing-reader-viewport" data-story-viewport>
-                            <div class="landing-reader-page" data-story-document><h3>Molecules and bonds</h3><p>Look at a glass of water. Every drop contains countless molecules, each made from the same combination of atoms.</p><svg viewBox="0 0 480 340" role="img" aria-label="Water molecule illustration"><use href="#landing-water"/></svg><h4>A small structure, repeated</h4><p>Two hydrogen atoms bond to one oxygen atom to make a water molecule. A sample of water contains many of these molecules moving among one another.</p><p>The formula H<sub>2</sub>O describes one molecule. The small 2 belongs to hydrogen: it tells us that two hydrogen atoms are present. Oxygen has no written subscript because there is one oxygen atom.</p><div class="landing-formula"><span>2 hydrogen atoms</span><strong>H<sub>2</sub>O</strong><span>1 oxygen atom</span></div><h4>Count atoms, not letters</h4><p>A chemical formula gives both the elements and their proportions. The letters identify the elements; the subscripts tell you how many atoms of each are present.</p><p>One water molecule therefore contains three atoms in total. Its two elements are hydrogen and oxygen. The number of elements and the number of atoms describe different things.</p><h4>Bring the idea together</h4><p>Before the next activity, use the formula to identify each element and count its atoms. In H<sub>2</sub>O, that is two hydrogen atoms and one oxygen atom.</p><div class="landing-reading-finish"><span data-story-completion>End of the sample reading</span><span class="landing-illustrated-action" data-story-action>Mark reading complete <svg width="18" height="18" aria-hidden="true"><use href="#landing-check"/></svg></span></div></div>
-                            <div class="landing-reader-next" data-story-next><span class="landing-next-check"><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><use href="#landing-check"/></svg></span><h3>Ready for a checkpoint?</h3><p>What does the 2 in H<sub>2</sub>O tell you?</p><div class="landing-preview-option">The number of hydrogen atoms</div><div class="landing-preview-option">The number of oxygen atoms</div><a href="#checkpoints" class="landing-text-link">Try the sample below <span aria-hidden="true">↓</span></a></div>
+            <figure class="landing-product" aria-label="Example learning dashboard">
+                <div class="landing-product-card">
+                    <div class="landing-product-top"><span>Cycle 1 · Your learning path</span><span class="landing-dot-row" aria-hidden="true"><i></i><i></i><i></i></span></div>
+                    <div class="landing-product-body">
+                        <div class="landing-ring" role="img" aria-label="Example: Cycle 1 is 50 percent complete, 2 of 4 stages">
+                            <svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="50"/><circle class="landing-ring-fill" cx="60" cy="60" r="50" pathLength="100"/></svg>
+                            <div><strong>50<small>%</small></strong><span>2 of 4 stages</span></div>
                         </div>
-                        <div class="landing-reader-bottom"><div class="landing-reader-oval"><svg viewBox="0 0 260 64" aria-hidden="true"><rect x="3" y="3" width="254" height="58" rx="29" pathLength="100"/><rect class="landing-oval-fill" x="3" y="3" width="254" height="58" rx="29" pathLength="100"/></svg><span data-story-tracker>Reading preview</span></div><span class="landing-reader-save" data-story-save>Lesson preview</span></div>
-                        <figcaption class="landing-sr-only">Interactive lesson preview. No learning records are changed.</figcaption>
-                    </figure>
+                        <ol class="landing-stages">
+                            <li class="is-done"><span>{!! $check !!}</span><div><strong>Pre-test</strong><small>Submitted</small></div></li>
+                            <li class="is-done"><span>{!! $check !!}</span><div><strong>Module</strong><small>All parts complete</small></div></li>
+                            <li class="is-now"><span>3</span><div><strong>Video lesson</strong><small>Up next</small></div><em>Continue</em></li>
+                            <li><span>4</span><div><strong>Post-test</strong><small>Opens after the video</small></div></li>
+                        </ol>
+                    </div>
                 </div>
-            </div>
-        </section>
+                <div class="landing-toast" aria-hidden="true"><span>{!! $check !!}</span>Answer saved · 10:42</div>
+                <figcaption class="landing-sr-only">Illustrative example only. Your teacher sets the actual module and cycle activities.</figcaption>
+            </figure>
+        </div>
+    </section>
 
-        <section id="checkpoints" class="landing-checkpoints" aria-labelledby="checkpoint-title">
-            <div class="landing-frame landing-checkpoint-layout">
-                <div class="landing-checkpoint-copy"><h2 id="checkpoint-title" data-landing-reveal>A checkpoint<br>you can finish</h2><p data-landing-reveal>Save an answer while you work. Submit when you are ready. ChemTrack keeps the submitted answers and records the result.</p></div>
-                <figure class="landing-answer-sheet" data-ui data-checkpoint-demo>
-                    <div class="landing-demo-heading"><p class="landing-demo-note">Interactive preview</p><button type="button" class="landing-replay" data-demo-play hidden>Play example <span aria-hidden="true">↻</span></button></div>
-                    <fieldset data-demo-options><legend>What does H<sub>2</sub>O contain?</legend><label class="landing-demo-answer"><input type="radio" name="demo-answer" value="0"><span>Two hydrogen atoms and one oxygen atom</span></label><label class="landing-demo-answer"><input type="radio" name="demo-answer" value="1"><span>One hydrogen atom and two oxygen atoms</span></label></fieldset>
-                    <div class="landing-demo-controls"><span data-demo-status role="status">Choose an answer</span><button type="button" class="landing-action" data-demo-submit disabled>Submit answer</button></div><noscript><p class="landing-demo-note">Enable JavaScript to try this interactive example.</p></noscript>
-                    <div class="landing-answer-receipt" data-demo-receipt hidden><svg width="28" height="28" aria-hidden="true"><use href="#landing-check"/></svg><div><strong>Submission confirmed</strong><p>The next activity is ready.</p></div></div><figcaption class="landing-sr-only">Try the preview. Answers are not saved to your account.</figcaption>
-                </figure>
-            </div>
-        </section>
+    <section id="how" class="landing-section landing-frame" aria-labelledby="how-title">
+        <div class="landing-section-head">
+            <p class="eyebrow">How it works</p>
+            <h2 id="how-title" data-landing-reveal>One module. Two cycles.<br>Four clear stages.</h2>
+            <p data-landing-reveal>Every cycle follows the same path, so students always know what comes next. Cycle 2 opens when Cycle 1 is complete and the teacher releases it.</p>
+        </div>
+        <ol class="landing-steps">
+            <li data-landing-reveal><span class="landing-step-no">01</span><h3>Pre-test</h3><p>A quick check of what the student already knows before the module begins.</p></li>
+            <li data-landing-reveal><span class="landing-step-no">02</span><h3>Module</h3><p>Read each part in the built-in reader. Your place is saved, and checkpoints unlock the next part.</p></li>
+            <li data-landing-reveal><span class="landing-step-no">03</span><h3>Video lesson</h3><p>Watch the lesson, then confirm when you have finished it.</p></li>
+            <li data-landing-reveal><span class="landing-step-no">04</span><h3>Post-test</h3><p>Show what you have learned. Submitted answers and scores are kept on record.</p></li>
+        </ol>
+    </section>
 
-        <section id="progress" class="landing-progress landing-frame" aria-labelledby="progress-title">
-            <div class="landing-section-intro"><h2 id="progress-title" data-landing-reveal>See the whole picture</h2><p data-landing-reveal>See your overall progress and the next step in each cycle.</p></div>
-            <div class="landing-progress-preview" data-ui data-landing-reveal>
-                <div class="landing-overall"><div class="landing-overall-ring" role="img" aria-label="Synthetic example: 50 percent overall, 2 of 4 required tasks complete across both cycles"><svg viewBox="0 0 280 280" aria-hidden="true"><circle cx="140" cy="140" r="124"/><circle class="landing-overall-fill" cx="140" cy="140" r="124" pathLength="100"/></svg><div><strong>50<span>%</span></strong><span>Overall completion</span><small>2 of 4 required tasks</small></div></div><p>Across Cycle 1 and Cycle 2</p></div>
-                <div class="landing-cycle-preview"><p class="landing-demo-note">Progress preview</p><fieldset class="landing-cycle-switch"><legend>Preview a cycle</legend><div><input id="landing-cycle-one" type="radio" name="landing-cycle" value="1" checked aria-controls="landing-cycle-one-tasks"><label for="landing-cycle-one">Cycle 1</label><input id="landing-cycle-two" type="radio" name="landing-cycle" value="2" aria-controls="landing-cycle-two-tasks"><label for="landing-cycle-two">Cycle 2</label></div></fieldset>
-                    <div id="landing-cycle-one-tasks" class="landing-cycle-tasks" data-cycle="1"><h3>Cycle 1 tasks</h3><p>2 of 2 complete</p><div class="landing-task"><span class="landing-task-ring landing-task-complete" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#landing-check"/></svg></span><div><strong>Module reading · first part</strong><span>Complete</span></div></div><div class="landing-task"><span class="landing-task-ring landing-task-complete" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#landing-check"/></svg></span><div><strong>First checkpoint</strong><span>Submission confirmed</span></div></div></div>
-                    <div id="landing-cycle-two-tasks" class="landing-cycle-tasks" data-cycle="2"><h3>Cycle 2 tasks</h3><p>0 of 2 complete</p><div class="landing-task"><svg class="landing-task-progress" viewBox="0 0 40 40" role="img" aria-label="40 percent viewed"><circle cx="20" cy="20" r="16"/><circle class="landing-task-progress-fill" cx="20" cy="20" r="16" pathLength="100"/></svg><div><strong>Module reading · next part</strong><span>40% viewed · in progress</span></div></div><div class="landing-task"><span class="landing-task-ring" aria-hidden="true"></span><div><strong>Next checkpoint</strong><span>Locked until the preceding part is complete</span></div></div></div>
-                </div>
+    <section id="checkpoints" class="landing-dark" aria-labelledby="checkpoint-title">
+        <div class="landing-frame landing-checkpoint-grid">
+            <div class="landing-checkpoint-copy">
+                <p class="eyebrow">Checkpoints</p>
+                <h2 id="checkpoint-title" data-landing-reveal>Answers save as you go. Submit when you're ready.</h2>
+                <p data-landing-reveal>Slow connection? ChemTrack shows exactly what has been saved, retries safely and never submits twice. Submitted answers are final and stay on record.</p>
+                <ul class="landing-ticks">
+                    <li>{!! $check !!}Clear saving, saved and retry states</li>
+                    <li>{!! $check !!}Resume where you stopped on any device</li>
+                    <li>{!! $check !!}Scored on the server, not in the browser</li>
+                </ul>
             </div>
-            
-        </section>
+            <figure class="landing-demo" data-checkpoint-demo>
+                <div class="landing-demo-heading"><p class="landing-demo-note">Interactive preview</p><button type="button" class="landing-replay" data-demo-play hidden>Play example <span aria-hidden="true">↻</span></button></div>
+                <fieldset data-demo-options>
+                    <legend><span>Question 1</span>What does H<sub>2</sub>O contain?</legend>
+                    <label class="landing-demo-answer"><input type="radio" name="demo-answer" value="0"><span>Two hydrogen atoms and one oxygen atom</span></label>
+                    <label class="landing-demo-answer"><input type="radio" name="demo-answer" value="1"><span>One hydrogen atom and two oxygen atoms</span></label>
+                </fieldset>
+                <div class="landing-demo-controls"><span class="landing-demo-status" data-demo-status role="status">Choose an answer</span><button type="button" class="button" data-demo-submit disabled>Submit answer</button></div>
+                <noscript><p class="landing-demo-note">Enable JavaScript to try this interactive example.</p></noscript>
+                <div class="landing-receipt" data-demo-receipt hidden><span>{!! $check !!}</span><div><strong>Submission confirmed</strong><p>The next activity is ready.</p></div></div>
+                <figcaption class="landing-sr-only">Try the preview. Answers are not saved to any account.</figcaption>
+            </figure>
+        </div>
+    </section>
 
-        <section class="landing-start" aria-labelledby="start-title"><div class="landing-frame landing-start-layout"><p data-landing-reveal>Your teacher sets the material.<br>You bring the next step.</p><div class="landing-start-sheet" data-landing-reveal><h2 id="start-title">Return to your learning</h2><p>Open ChemTrack to see your own assigned work and confirmed progress.</p><a class="landing-action" href="{{ $dashboardUrl }}">{{ $actionLabel }}</a></div></div></section>
-    </main>
-    <footer class="landing-footer landing-frame"><div><x-brand class="landing-footer-brand" /><p>Chemistry at your pace.</p></div><nav aria-label="Footer navigation"><a href="#landing-title">Back to the beginning</a><a href="#module">Inside the module</a><a href="#checkpoints">Checkpoints</a><a href="#progress">Your progress</a><a href="{{ $dashboardUrl }}">{{ $actionLabel }}</a></nav></footer>
+    <section id="teachers" class="landing-section landing-frame" aria-labelledby="teachers-title">
+        <div class="landing-section-head">
+            <p class="eyebrow">Built for both sides</p>
+            <h2 id="teachers-title" data-landing-reveal>A learning space for students.<br>A clear record for teachers.</h2>
+        </div>
+        <div class="landing-audiences">
+            <article class="landing-audience" data-landing-reveal>
+                <span class="landing-audience-tag">Students</span>
+                <h3>Know where you are and what's next</h3>
+                <ul class="landing-ticks">
+                    <li>{!! $check !!}One progress ring per cycle, plus a ring for every task</li>
+                    <li>{!! $check !!}A reader that remembers your page</li>
+                    <li>{!! $check !!}Locked steps explain what to finish first</li>
+                    <li>{!! $check !!}Light, dark and larger-text options</li>
+                </ul>
+            </article>
+            <article class="landing-audience landing-audience-teacher" data-landing-reveal>
+                <span class="landing-audience-tag">Teachers</span>
+                <h3>See progress without chasing it</h3>
+                <ul class="landing-ticks">
+                    <li>{!! $check !!}Programmes, activities and student invitations in one place</li>
+                    <li>{!! $check !!}Reading, completion and scores kept separate</li>
+                    <li>{!! $check !!}Release Cycle 2 when your class is ready</li>
+                    <li>{!! $check !!}Export a spreadsheet-safe CSV report</li>
+                </ul>
+            </article>
+        </div>
+        <div class="landing-privacy" data-landing-reveal>
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" aria-hidden="true"><path d="M12 3 5 6v5c0 4.5 3 8.4 7 10 4-1.6 7-5.5 7-10V6l-7-3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <p><strong>Private by design.</strong> Students appear as codes such as ST1-G in learning views, reports and exports. Names and LRNs stay encrypted in the student's own account.</p>
+        </div>
+    </section>
+
+    <section class="landing-frame landing-final" aria-labelledby="start-title">
+        <div class="landing-final-card">
+            <x-brand-mark />
+            <h2 id="start-title">Ready to pick up where you left off?</h2>
+            <p>Sign in with your student code or teacher email to see your own assigned work.</p>
+            <div class="landing-actions"><a class="button landing-cta" href="{{ $dashboardUrl }}">{{ $actionLabel }}</a>@guest<a class="secondary-button" href="/register">Create student account</a>@endguest</div>
+        </div>
+    </section>
+</main>
+
+<footer class="landing-footer">
+    <div class="landing-frame landing-footer-inner">
+        <div><x-brand class="landing-footer-brand" /><p>Chemistry, one clear step at a time.</p></div>
+        <nav aria-label="Footer navigation"><a href="#how">How it works</a><a href="#checkpoints">Checkpoints</a><a href="#teachers">For teachers</a><a href="{{ $dashboardUrl }}">{{ $actionLabel }}</a></nav>
+    </div>
+    <div class="landing-frame landing-footnote"><p>© {{ now()->year }} ChemTrack · Self-paced chemistry remediation</p></div>
+</footer>
 </body>
 </html>

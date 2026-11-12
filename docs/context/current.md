@@ -1,6 +1,8 @@
 # Current context
 
-Updated: 9 November 2026, Asia/Manila.
+Updated: 12 November 2026, Asia/Manila.
+
+**12 November — deployment-ready redesign.** New visual identity (logo, cobalt/lime tokens, Bricolage Grotesque + Inter, full dark mode), rewritten landing page, restyled public, student, teacher and error pages, and production hardening (rate limits, proxies, security headers, `chemtrack:create-teacher`, deployment guide). 102 tests / 737 assertions and 27 frontend checks pass; build and audit are clean. Next: pick a host and follow [deployment](../deployment.md). Configure a real mail sender, create the teacher account, and add the approved module, video and Forms materials before real students join. Real-phone and screen-reader checks are still pending.
 
 The user requested a GitHub source handoff for phone editing. The matching repository is `janverty123/ChemTrack`. The snapshot includes app source, assets, tests and setup notes. Keep local configuration, credentials and data outside Git. Use the GitHub web editor for source changes and a PHP/database development environment to run the application.
 

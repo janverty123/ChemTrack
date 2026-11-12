@@ -1,29 +1,56 @@
-.overall-ring { width: min(100%, 260px); aspect-ratio: 1; position: relative; margin: 26px auto 20px; }
-.overall-ring>svg,.task-ring>svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-.ring-track,.ring-fill { fill: none; stroke-width: 9; }
-.ring-track { stroke: #d9e8df; }
-.ring-fill { stroke: #115e59; stroke-linecap: round; transition: stroke-dasharray .25s ease; }
-.overall-ring-copy { position: absolute; inset: 12%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(4px, 2cqi, 6px); font-size: clamp(.7rem, 4.8cqi, .78rem); line-height: 1.25; text-align: center; }
-.overall-ring-copy strong { font-family: Manrope, Inter, sans-serif; font-size: clamp(2rem, 22cqi, 3.5rem); font-weight: 700; line-height: 1.1; letter-spacing: -.035em; font-variant-numeric: tabular-nums; }
-.overall-ring-copy small { font-size: .42em; letter-spacing: 0; }
-.overall-label-short,.overall-progress-count { display: none; }
-.overall-ring-label,.overall-ring-count { max-width: 100%; }
-.overall-progress-count { margin: -6px auto 16px; text-align: center; font-size: .76rem; line-height: 1.5; color: var(--ct-muted, #526760); font-variant-numeric: tabular-nums; }
-.cycle-switch { display: flex; width: fit-content; max-width: 100%; margin: 12px auto 0; padding: 3px; border: 1px solid #7a9087; border-radius: 100px; background: white; }
-.cycle-switch :is(a,button) { min-height: 40px; display: inline-flex; justify-content: center; align-items: center; padding: 7px 12px; border-radius: 100px; text-decoration: none; font-size: .8rem; font-weight: 600; white-space: nowrap; }
-.cycle-switch :is(a,button)[aria-current] { background: var(--ct-primary, #115e59); color: white; }
-.overall-ring .cycle-switch { gap: 0; margin: 2px auto 0; }
-.overall-ring .cycle-switch :is(a,button) { min-height: 44px; padding: 7px clamp(7px, 3cqi, 10px); font-size: clamp(.7rem, 4.8cqi, .8rem); }
+/* Progress rings and cycle switch, shared by student and teacher (Filament) views. */
+.overall-ring { position: relative; width: min(100%, 250px); aspect-ratio: 1; margin: 20px auto 16px; color: var(--c-text); }
+.overall-ring > svg, .task-ring > svg { width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
+.ring-track, .ring-fill { fill: none; stroke-width: 10; }
+.ring-track { stroke: color-mix(in srgb, var(--c-primary) 14%, var(--c-surface-2)); }
+.ring-fill { stroke: var(--c-primary); stroke-linecap: round; transition: stroke-dasharray .4s var(--ease-out); }
+.overall-ring-copy {
+    position: absolute; inset: 13%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: clamp(3px, 2cqi, 6px); text-align: center; line-height: 1.25;
+    font-size: clamp(.7rem, 4.6cqi, .8rem); color: var(--c-muted);
+}
+.overall-ring-copy strong {
+    font: 700 clamp(2rem, 21cqi, 3.4rem)/1 var(--font-display); letter-spacing: -.04em;
+    color: var(--c-text); font-variant-numeric: tabular-nums;
+}
+.overall-ring-copy small { font-size: .45em; letter-spacing: 0; color: var(--c-muted); }
+.overall-ring-label, .overall-ring-count { max-width: 100%; }
+.overall-ring-label { font-weight: 600; }
+.overall-label-short, .overall-progress-count { display: none; }
+.overall-progress-count { margin: -4px auto 12px; text-align: center; font-size: .78rem; color: var(--c-muted); font-variant-numeric: tabular-nums; }
+
+.cycle-switch {
+    display: flex; width: fit-content; max-width: 100%; margin: 10px auto 0; padding: 3px; gap: 2px;
+    border-radius: 999px; background: var(--c-surface-2); border: 1px solid var(--c-line);
+}
+.cycle-switch :is(a, button) {
+    display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 6px 14px;
+    border: 0; border-radius: 999px; background: transparent; color: var(--c-muted);
+    font-size: .8rem; font-weight: 650; white-space: nowrap; text-decoration: none; cursor: pointer;
+    transition: background-color 150ms, color 150ms;
+}
+.cycle-switch :is(a, button):hover { color: var(--c-text); }
+.cycle-switch :is(a, button)[aria-current] { background: var(--c-primary); color: var(--c-on-primary); box-shadow: var(--shadow-sm); }
+.cycle-switch :is(a, button)[aria-busy=true], .cycle-switch button:disabled { opacity: .65; cursor: wait; }
+.overall-ring .cycle-switch { margin: 4px auto 0; }
+.overall-ring .cycle-switch :is(a, button) { min-height: 44px; padding: 6px clamp(8px, 3.4cqi, 14px); font-size: clamp(.7rem, 4.6cqi, .8rem); }
+
 @container programme-overview (max-width: 220px) {
-    .overall-label-full,.overall-ring-count { display: none; }
+    .overall-label-full, .overall-ring-count { display: none; }
     .overall-label-short { display: inline; }
     .overall-progress-count { display: block; }
 }
-.task-ring { position: relative; width: 50px; height: 50px; flex-shrink: 0; }
-.task-ring .ring-track,.task-ring .ring-fill { stroke-width: 3.5; }
-.task-ring>span { position: absolute; inset: 0; display: grid; place-items: center; font-size: .65rem; font-weight: 600; font-variant-numeric: tabular-nums; }
-.is-complete .task-ring>span { font-size: 1rem; }
 
-.cycle-switch button { cursor:pointer; }
-.cycle-switch button:disabled { cursor:wait; opacity:.65; }
-@media(prefers-reduced-motion:reduce) { .ring-fill { transition:none; } }
+.task-ring { position: relative; width: 48px; height: 48px; flex-shrink: 0; color: var(--c-text); }
+.task-ring .ring-track, .task-ring .ring-fill { stroke-width: 4; }
+.task-ring > span {
+    position: absolute; inset: 0; display: grid; place-items: center;
+    font-size: .66rem; font-weight: 700; font-variant-numeric: tabular-nums;
+}
+.is-complete .task-ring .ring-fill { stroke: var(--c-primary); }
+.is-complete .task-ring > span { color: var(--c-primary); font-size: 1rem; }
+.is-locked .task-ring { opacity: .55; }
+
+/* A zero-length round-capped stroke still paints a dot; hide it at 0%. */
+.ring-fill[stroke-dasharray^="0 "] { stroke: transparent; }

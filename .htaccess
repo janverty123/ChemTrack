@@ -1,0 +1,10 @@
+# Safety net for hosts where the document root cannot point at public/.
+# Everything is routed into public/, so .env, storage/ (private PDFs and photos),
+# vendor/ and the source are never served directly. Prefer setting the document root to public/.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+<IfModule !mod_rewrite.c>
+    Require all denied
+</IfModule>

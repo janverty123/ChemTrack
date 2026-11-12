@@ -17,23 +17,17 @@ class LandingPageTest extends TestCase
             ->assertDontSee('href="/learn"', false);
     }
 
-    public function test_signed_in_student_can_return_to_their_learning_dashboard(): void
+    public function test_signed_in_student_opening_the_site_goes_straight_to_their_dashboard(): void
     {
         $this->actingAs(User::factory()->make(['role' => 'student']));
 
-        $this->get('/')->assertOk()
-            ->assertSee('href="/learn"', false)
-            ->assertSee('Open dashboard')
-            ->assertDontSee('href="/teacher"', false);
+        $this->get('/')->assertRedirect('/learn');
     }
 
-    public function test_signed_in_teacher_can_return_to_the_teacher_dashboard(): void
+    public function test_signed_in_teacher_opening_the_site_goes_straight_to_the_teacher_dashboard(): void
     {
         $this->actingAs(User::factory()->make(['role' => 'teacher']));
 
-        $this->get('/')->assertOk()
-            ->assertSee('href="/teacher"', false)
-            ->assertSee('Open dashboard')
-            ->assertDontSee('href="/learn"', false);
+        $this->get('/')->assertRedirect('/teacher');
     }
 }

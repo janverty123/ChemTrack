@@ -2,7 +2,7 @@
 <x-workspace :title="$title" :public="true" :auth-page="true">
 <div class="auth-shell auth-{{ $mode }}">
     <header class="auth-header">
-        <a class="auth-back" href="{{ $backHref }}"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m14 6-6 6 6 6M8 12h13" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>{{ $backLabel }}</span></a>
+        <a class="auth-back" href="{{ $backHref }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m14 6-6 6 6 6M8 12h13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>{{ $backLabel }}</span></a>
         <x-brand />
     </header>
     <div class="auth-grid">
@@ -16,7 +16,7 @@
                 @if($step)
                 <ol class="auth-steps" aria-label="Account setup progress">
                     @foreach(['Email', 'Verify', 'Details'] as $label)
-                    <li @if($loop->iteration === (int) $step) aria-current="step" @endif class="{{ $loop->iteration < (int) $step ? 'is-done' : '' }}"><span aria-hidden="true">{{ $loop->iteration }}</span>{{ $label }}</li>
+                    <li @if($loop->iteration === (int) $step) aria-current="step" @endif class="{{ $loop->iteration < (int) $step ? 'is-done' : '' }}"><span aria-hidden="true">{{ $loop->iteration < (int) $step ? '✓' : $loop->iteration }}</span>{{ $label }}</li>
                     @endforeach
                 </ol>
                 @endif
@@ -25,12 +25,17 @@
         </section>
         <aside class="auth-story" aria-label="About ChemTrack">
             <div class="auth-story-body">
-                <div class="auth-atom" aria-hidden="true"><svg viewBox="0 0 240 180" fill="none"><ellipse cx="120" cy="90" rx="104" ry="35" stroke="currentColor"/><ellipse cx="120" cy="90" rx="104" ry="35" stroke="currentColor" transform="rotate(60 120 90)"/><ellipse cx="120" cy="90" rx="104" ry="35" stroke="currentColor" transform="rotate(120 120 90)"/><circle cx="120" cy="90" r="10" fill="currentColor"/><circle cx="221" cy="82" r="6" fill="currentColor"/></svg></div>
-                <h2>{{ $mode === 'register' ? 'Your next step starts here.' : 'A clearer path through chemistry.' }}</h2>
-                <p>Learn at your own pace, check your understanding, and see how far you’ve come.</p>
-                <div class="auth-story-path" aria-hidden="true"><span>Read</span><i></i><span>Explore</span><i></i><span>Understand</span></div>
+                <div class="auth-story-mark" aria-hidden="true"><x-brand-mark /></div>
+                <h2>{{ $mode === 'register' ? 'Your learning path starts here.' : 'Chemistry, one clear step at a time.' }}</h2>
+                <p>Work through your module at your own pace. Your place, answers and progress are saved as you go.</p>
+                <ol class="auth-story-path" aria-label="Each cycle">
+                    <li><span>1</span>Pre-test</li>
+                    <li><span>2</span>Module</li>
+                    <li><span>3</span>Video lesson</li>
+                    <li><span>4</span>Post-test</li>
+                </ol>
             </div>
-            <p class="auth-story-footer">Chemistry remediation & progress tracking</p>
+            <p class="auth-story-footer">Chemistry remediation &amp; progress tracking</p>
         </aside>
     </div>
 </div>

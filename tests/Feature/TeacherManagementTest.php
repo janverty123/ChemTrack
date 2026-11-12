@@ -15,7 +15,7 @@ class TeacherManagementTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_editing_student_name_does_not_expose_or_replace_password(): void
+    public function test_editing_a_student_without_a_new_password_keeps_the_existing_password(): void
     {
         $teacher = User::factory()->create(['role' => 'teacher']);
         $student = User::factory()->create(['role' => 'student', 'teacher_id' => $teacher->id]);
@@ -24,10 +24,10 @@ class TeacherManagementTest extends TestCase
         Filament::setCurrentPanel(Filament::getPanel('admin'));
         Livewire::test(EditUser::class, ['record' => $student->id])
             ->assertFormSet(['password' => null])
-            ->fillForm(['name' => 'Updated student'])
+            ->fillForm(['category' => 'G'])
             ->call('save')->assertHasNoFormErrors();
         $this->assertSame($hash, $student->fresh()->password);
-        $this->assertSame('Updated student', $student->fresh()->name);
+        $this->assertSame('G', $student->fresh()->category);
     }
 
     public function test_teacher_can_create_ordered_lesson_and_assessment_content(): void

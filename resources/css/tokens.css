@@ -1,0 +1,115 @@
+/*
+ * ChemTrack design tokens.
+ * Every colour used by the student, public and teacher surfaces comes from here.
+ * Light is the default; html[data-theme=dark] (set by components/appearance) switches the palette.
+ */
+:root {
+    color-scheme: light;
+
+    --font-display: 'Bricolage Grotesque', 'Inter', system-ui, sans-serif;
+    --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+    --c-bg: #f6f6f1;
+    --c-surface: #ffffff;
+    --c-surface-2: #efefe8;
+    --c-line: #e2e2d8;
+    --c-line-strong: #c4c4b6;
+    --c-field: #8d8f84;
+    --c-text: #14171f;
+    --c-muted: #5b6070;
+
+    --c-primary: #3346d3;
+    --c-primary-hover: #2635b0;
+    --c-primary-soft: #e9ecff;
+    --c-primary-line: #c3cbfb;
+    --c-on-primary: #ffffff;
+
+    --c-accent: #c8f051;
+    --c-accent-ink: #1d2600;
+
+    --c-ink-panel: #14171f;
+    --c-on-ink: #f4f5f9;
+    --c-on-ink-muted: #b6bac8;
+
+    --c-success: #116d34;
+    --c-success-soft: #e5f5ea;
+    --c-warning: #9a5a00;
+    --c-warning-soft: #fff3d6;
+    --c-danger: #b42318;
+    --c-danger-soft: #fdecea;
+
+    --c-focus: #3346d3;
+    --c-selection: #d7ddff;
+    --c-shadow: 20 23 31;
+
+    --brand-main: var(--c-primary);
+    --brand-track: rgb(51 70 211 / .2);
+    --brand-inner: var(--c-text);
+    --brand-node: var(--c-accent);
+    --brand-node-ring: var(--c-primary);
+
+    --radius-sm: 10px;
+    --radius: 14px;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+    --shadow-sm: 0 1px 2px rgb(var(--c-shadow) / .06);
+    --shadow: 0 1px 2px rgb(var(--c-shadow) / .05), 0 8px 24px -8px rgb(var(--c-shadow) / .12);
+    --shadow-lg: 0 2px 4px rgb(var(--c-shadow) / .04), 0 24px 48px -16px rgb(var(--c-shadow) / .22);
+    --ease-out: cubic-bezier(.16, 1, .3, 1);
+}
+
+html[data-theme=dark] {
+    color-scheme: dark;
+
+    --c-bg: #0e111a;
+    --c-surface: #161a26;
+    --c-surface-2: #1d2231;
+    --c-line: #2a3042;
+    --c-line-strong: #3b4359;
+    --c-field: #6b7390;
+    --c-text: #eceef4;
+    --c-muted: #a3a9bb;
+
+    --c-primary: #8f9dff;
+    --c-primary-hover: #aab5ff;
+    --c-primary-soft: #232a4f;
+    --c-primary-line: #3c4682;
+    --c-on-primary: #0e111a;
+
+    --c-ink-panel: #1d2231;
+    --c-on-ink: #f4f5f9;
+    --c-on-ink-muted: #b6bac8;
+
+    --c-success: #6fd394;
+    --c-success-soft: #173326;
+    --c-warning: #f2c165;
+    --c-warning-soft: #352a12;
+    --c-danger: #ff9e94;
+    --c-danger-soft: #3a1c1c;
+
+    --c-focus: #aab5ff;
+    --c-selection: #33407d;
+    --c-shadow: 0 0 0;
+
+    --brand-track: rgb(143 157 255 / .25);
+}
+
+html[data-text-size=large] { font-size: 112.5%; }
+
+html[data-reduced-motion=true] *,
+html[data-reduced-motion=true] *::before,
+html[data-reduced-motion=true] *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+}

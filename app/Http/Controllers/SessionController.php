@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Filament\Auth\TeacherLogin;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,9 +28,11 @@ class SessionController extends Controller
         }
         $candidate = User::where(array_diff_key($credentials, ['password' => true]))->first();
         if ($candidate?->role === 'teacher' && filled($candidate->app_authentication_secret) && Hash::check($data['password'], $candidate->password)) {
+            $request->session()->put(TeacherLogin::HANDOFF_KEY, now()->addMinutes(10)->getTimestamp());
+
             return redirect('/teacher/login')->with('status', 'Continue secure teacher sign-in with your authenticator.');
         }
-        if (! Auth::attempt($credentials)) {
+        if (! Auth::attempt($credentials, $request->boolean('remember'))) {
             throw ValidationException::withMessages([$field => 'The student code, email or password is incorrect.']);
         }
         $request->session()->regenerate();

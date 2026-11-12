@@ -155,7 +155,7 @@ class TeacherWorkspaceTest extends TestCase
     {
         [$teacher, , , , , $programme] = $this->workspace();
         $questions = [['prompt' => 'Which particle is negative?', 'options' => ['Proton', 'Electron'], 'correct' => 1]];
-        $quiz = $programme->activities()->create(['title' => 'Existing checkpoint', 'type' => 'checkpoint', 'position' => 2, 'questions' => $questions]);
+        $quiz = $programme->activities()->create(['title' => 'Existing checkpoint', 'type' => 'checkpoint', 'cycle' => 1, 'position' => 2, 'questions' => $questions]);
         $this->actingAs($teacher);
         Filament::setCurrentPanel(Filament::getPanel('admin'));
         Livewire::test(EditProgramme::class, ['record' => $programme->id])->call('save')->assertHasNoFormErrors();

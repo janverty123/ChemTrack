@@ -1,7 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { moduleScene, sceneProgress } from '../../resources/js/landing-motion.js';
 
 // Runs the real event handlers with a small DOM/timer stand-in; this does not render a browser.
 function harness(reduced = false, accountReduced = false) {
@@ -38,26 +37,21 @@ function harness(reduced = false, accountReduced = false) {
             return { finished: new Promise((resolve) => { timer = later(resolve, settings.duration + (settings.delay || 0)); }), cancel() { timers.delete(timer); } };
         }
     }
-    const landing = new Element(), menu = new Element(), trigger = new Element(), close = new Element(), link = new Element();
-    menu.children['[data-landing-close]'] = close;
-    menu.lists['a'] = menu.lists['nav a'] = [link];
-    const story = new Element(), viewport = new Element(), page = new Element(), next = new Element();
-    for (const key of ['[data-story-tracker]', '[data-story-label]', '[data-story-save]', '[data-story-completion]', '.landing-oval-fill']) story.children[key] = new Element();
-    Object.assign(story.children, { '[data-story-viewport]': viewport, '[data-story-document]': page, '[data-story-next]': next });
+    const landing = new Element();
     const demo = new Element(), options = new Element(), submit = new Element(), play = new Element(), status = new Element(), receipt = new Element();
     receipt.hidden = true; submit.disabled = true;
     const radios = [new Element(), new Element()];
     options.lists.input = radios;
     Object.assign(demo.children, { '[data-demo-options]': options, '[data-demo-submit]': submit, '[data-demo-play]': play, '[data-demo-status]': status, '[data-demo-receipt]': receipt });
-    Object.assign(landing.children, { '[data-landing-menu]': trigger, '#landing-menu': menu, '[data-reading-scene]': story, '.landing-hero-product': new Element(), '[data-checkpoint-demo]': demo });
+    Object.assign(landing.children, { '[data-checkpoint-demo]': demo });
     const preference = new Element(); preference.matches = reduced;
     const doc = new Element(); doc.querySelector = () => landing;
     doc.documentElement = { dataset: { reducedMotion: accountReduced ? 'true' : 'false' } };
     const win = new Element(); Object.assign(win, { innerHeight: 800, scrollY: 0, matchMedia: () => preference, requestAnimationFrame: (fn) => fn() });
-    const source = readFileSync(new URL('../../resources/js/landing.js', import.meta.url), 'utf8').replace(/^import .*;\s*/m, '');
-    new Function('document', 'window', 'moduleScene', 'sceneProgress', 'setTimeout', 'clearTimeout', source)(doc, win, moduleScene, sceneProgress, later, (id) => timers.delete(id));
+    const source = readFileSync(new URL('../../resources/js/landing.js', import.meta.url), 'utf8');
+    new Function('document', 'window', 'setTimeout', 'clearTimeout', source)(doc, win, later, (id) => timers.delete(id));
     const choose = (index) => { radios.forEach((radio, i) => { radio.checked = index === i; }); radios[index].fire('change'); };
-    return { advance, choose, menu, trigger, close, link, demo, options, submit, play, status, receipt, story, next, preference };
+    return { advance, choose, demo, options, submit, play, status, receipt, preference, landing };
 }
 
 test('manual answer must finish saving before submission; confirmation disables the sample answers', () => {
@@ -99,52 +93,20 @@ test('replay resets the submitted state and reduced motion uses manual actions',
     assert.equal(quiet.receipt.hidden, false);
 });
 
-test('Escape can immediately close even during an animated close, restoring the trigger state', () => {
-    const app = harness();
-    app.trigger.fire('click');
-    assert.equal(app.menu.open, true);
-    assert.equal(app.trigger.attributes['aria-expanded'], 'true');
-    app.close.fire('click');
-    assert.equal(app.menu.open, true);
-    app.menu.fire('cancel');
-    assert.equal(app.menu.open, false);
-    assert.equal(app.trigger.attributes['aria-expanded'], 'false');
-    assert.equal(app.trigger.focused, true);
-});
-
-test('following a destination closes the menu without waiting on the decorative animation', () => {
-    const app = harness();
-    app.trigger.fire('click'); app.link.fire('click');
-    assert.equal(app.menu.open, false);
-    assert.equal(app.trigger.attributes['aria-expanded'], 'false');
-});
-
-test('pointer closure keeps the native dialog open until the exit animation ends', async () => {
-    const app = harness();
-    app.trigger.fire('click'); app.close.fire('click');
-    app.advance(179); await Promise.resolve();
-    assert.equal(app.menu.open, true);
-    app.advance(1); await Promise.resolve();
-    assert.equal(app.menu.open, false);
-    assert.equal(app.trigger.attributes['aria-expanded'], 'false');
-});
-
-test('switching to reduced motion restores the static reader and exposes its next-part link', () => {
-    const app = harness();
-    assert.equal(app.next.inert, true);
-    app.preference.matches = true;
-    app.preference.fire('change');
-    assert.equal(app.next.inert, false);
-    assert.equal(app.next.attributes['aria-hidden'], undefined);
-    assert.equal(app.next.style.transform, undefined);
-    assert.equal(app.story.children['[data-story-tracker]'].textContent, 'Reading preview');
-});
-
-test('saved account reduced motion keeps reader static and disables automatic example playback', () => {
+test('saved account reduced motion disables automatic example playback', () => {
     const app = harness(false, true);
-    assert.equal(app.next.inert, false);
     app.play.fire('click'); app.advance(5000);
     assert.equal(app.receipt.hidden, true);
     app.choose(0); app.advance(0); app.submit.fire('click'); app.advance(0);
     assert.equal(app.receipt.hidden, false);
+});
+
+test('switching to reduced motion stops a running example and resets it for manual use', () => {
+    const app = harness();
+    app.play.fire('click'); app.advance(700);
+    app.preference.matches = true;
+    app.preference.fire('change');
+    app.advance(5000);
+    assert.equal(app.receipt.hidden, true);
+    assert.equal(app.status.textContent, 'Choose an answer');
 });

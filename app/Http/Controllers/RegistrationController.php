@@ -83,7 +83,8 @@ class RegistrationController extends Controller
     {
         $key = 'signup-mail:'.hash('sha256', $email);
         $ipKey = 'signup-mail-ip:'.hash('sha256', $request->ip() ?? 'unknown');
-        if (RateLimiter::tooManyAttempts($key, 5) || RateLimiter::tooManyAttempts($ipKey, 5)) {
+        // The per-IP ceiling allows a whole class signing up on one school network; the per-email limit stops abuse.
+        if (RateLimiter::tooManyAttempts($key, 5) || RateLimiter::tooManyAttempts($ipKey, 40)) {
             throw ValidationException::withMessages(['email' => 'Please wait before requesting another verification email.']);
         }
         // Shared atomic reservation covers start/restart/resend and concurrent browser sessions.
@@ -158,7 +159,13 @@ class RegistrationController extends Controller
                 $code = (string) random_int(100000, 999999);
             }
             $challenge->update(['code_hash' => Hash::make($code), 'sent_at' => now(), 'expires_at' => now()->addMinutes(10), 'verified_at' => null, 'failed_attempts' => 0]);
-            Notification::route('mail', $challenge->email)->notify(new SignupCode($code));
+            try {
+                Notification::route('mail', $challenge->email)->notify(new SignupCode($code));
+            } catch (\Throwable $exception) {
+                // Rolling back keeps the previously sent code valid.
+                report($exception);
+                throw ValidationException::withMessages(['code' => 'We could not send a new code. Please try again later or ask your teacher.']);
+            }
         });
 
         return redirect($this->base($request).'/verify');

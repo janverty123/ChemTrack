@@ -1,12 +1,12 @@
 @import 'tailwindcss';
 @import './fonts.css';
+@import './tokens.css';
 @import './base.css';
 @import './progress.css';
 @import './workspace.css';
+@import './settings.css';
+@import './auth.css';
 @import './landing.css';
 
 @source '../views/**/*.blade.php';
 @theme { --font-sans: 'Inter', system-ui, sans-serif; }
-
-@import './settings.css';
-@import './auth.css';

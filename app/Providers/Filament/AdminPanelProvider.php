@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Auth\TeacherLogin;
 use Filament\Actions\Action;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\FontProviders\LocalFontProvider;
@@ -30,6 +31,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandName('ChemTrack · Teacher')
             ->brandLogo(fn () => view('filament.brand'))
             ->brandLogoHeight('2.25rem')
+            ->favicon('/favicon.svg')
             ->databaseTransactions()
             ->font('Inter', provider: LocalFontProvider::class)
             ->viteTheme('resources/css/filament/admin/theme.css')
@@ -40,9 +42,9 @@ class AdminPanelProvider extends PanelProvider
             ->sidebarWidth('16.125rem')
             ->navigationItems([NavigationItem::make('Settings')->url('/settings')->icon('heroicon-o-cog-6-tooth')->sort(90)])
             ->userMenuItems(['settings' => Action::make('settings')->label('Profile & settings')->url('/settings')->icon('heroicon-o-user-circle')])
-            ->login()
+            ->login(TeacherLogin::class)
             ->colors([
-                'primary' => '#115E59',
+                'primary' => '#3346D3',
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')

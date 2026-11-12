@@ -1,5 +1,8 @@
 # Design
 
+**Current identity:** [visual identity (12 November 2026)](visual-identity.md). The documents below record earlier directions.
+
+
 Latest 4 November correction: public/account entry always uses the original light palette; explicit account preferences apply after sign-in. Auth forms use one logo, corner Back control, wide sign-in/right and signup/left layout, floating labels, individual in-field password controls and progressive/reduced-motion-aware transitions. See [auth/theme evidence](../development/auth-theme-refinement.md). Fresh visual checks remain pending while viewing is disabled.
 
 Teacher theme now shares the student palette, local fonts, logo and rounded control language while keeping Filament's native teacher administration tools. The new overview and code-based student pages prioritize programme/content/progress/enrolment access. See [teacher workspace evidence](../development/teacher-workspace-evidence.md); native teacher sidebar fully retracts on desktop.

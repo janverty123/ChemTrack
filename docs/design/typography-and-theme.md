@@ -1,5 +1,8 @@
 # Typography and theme proposal
 
+> **Superseded on 12 November 2026** by the [visual identity](visual-identity.md) redesign (Bricolage Grotesque + Inter, cobalt/lime palette, new logo). Kept for history.
+
+
 Updated 30 October 2026 (Asia/Manila). Manrope headings, Inter reading text/controls and the teal/off-white direction are now applied to the landing and student workspace through self-hosted WOFF2 assets. Filament retains its own administration styling. New screens await visual/real-device review; see [implementation evidence](../development/site-update-evidence.md). The board below is the earlier static proposal, not a screenshot of the app.
 
 ## Direction

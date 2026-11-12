@@ -374,3 +374,19 @@ Checks: full96applicationtests697assertions, frontend33, Pint/build passed. Actu
 ## 9 November 2026 — GitHub source handoff
 
 The user requested the full site source in their GitHub repository for phone editing. Identified the matching empty repository, prepared the source snapshot and documented web editing and the separate requirements for running the app. Local configuration, credentials, databases and uploads stay outside the snapshot.
+
+## 12 November 2026 — Deployment-ready redesign
+
+Request: make ChemTrack ready for deployment, revise the UI completely where needed (assistant chooses colours, font and logo), make it responsive, clean up functions, and report everything changed or retained. Read the project docs and the OASAN knowledge-base ChemTrack handoff first.
+
+Work: new token-based design system with light/dark themes, a new logo and favicons, a rewritten landing page, and restyled auth, student, reader, settings, teacher (workspace and Filament) and error pages. Back end: per-route and per-account rate limits, configurable trusted proxies, global security headers, a create-teacher command, mail-failure handling, cached PDF hashing, avatar size cap, signup-challenge pruning, an implicit-timestamp migration and Symfony security patches. Added the deployment guide and production env template. Removed the unused welcome view, landing-motion code and Manrope.
+
+Checks: 102 PHP tests / 737 assertions; 27 frontend checks; Pint; Vite build; `composer audit` clean. Headless Chromium checks at 390 px and 1440 px for public, student and teacher pages (no horizontal overflow, no console errors), a real pre-test submission flow, dark mode, the mobile drawer with Escape, and the 404 page. Not done: real phones, a full screen-reader audit, live mail, the hosting provider and Google Forms read-back.
+
+## 12 November 2026 — Separate cycles, sign-in fixes, fresh-release copy
+
+Request: make each cycle's progress independent (each has its own pre-test, module, video and post-test); fix accounts that could not sign in; remove legacy/previous-version wording from settings; remove the landing-page link from the sidebar; send signed-in users straight to their dashboard.
+
+Cause of the sign-in failure: signing out from the teacher panel led to Filament's separate `/teacher/login`, where students can never sign in and which has its own rate limit. That page is now reachable only for the teacher two-factor step; everyone else is sent to `/login`.
+
+Work: cycle-only activity lists and rings, required cycle field, new demo data (two full cycles, coded students ST1-G and ST1-B), rewritten settings copy, `/` redirect for signed-in users, remember-me, and a Filament logout redirect. Checks: 107 tests / 754 assertions, 27 frontend checks, build passed; the browser flow (student sign-in by code, both cycles, teacher sign-out and sign-in again) passed.
