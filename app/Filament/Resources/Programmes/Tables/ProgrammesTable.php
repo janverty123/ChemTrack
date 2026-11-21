@@ -3,12 +3,15 @@
 namespace App\Filament\Resources\Programmes\Tables;
 
 use App\Filament\Actions\EnrollStudents;
+use App\Filament\Actions\InviteStudents;
 use App\Filament\Actions\OpenCycleTwo;
 use App\Filament\Resources\Programmes\ProgrammeResource;
 use App\Models\Programme;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -30,10 +33,14 @@ class ProgrammesTable
             ])
             ->recordActions([
                 ViewAction::make()->label('Open'),
-                OpenCycleTwo::make(),
-                EditAction::make(),
-                EnrollStudents::make(),
-                Action::make('results')->label('Student progress')->url(fn ($record) => '/teacher/programmes/'.$record->id.'/results'),
+                // Secondary actions share one menu so the row never overflows the table width.
+                ActionGroup::make([
+                    Action::make('results')->label('Student progress')->icon(Heroicon::OutlinedChartBar)->url(fn ($record) => '/teacher/programmes/'.$record->id.'/results'),
+                    InviteStudents::make(),
+                    EnrollStudents::make()->icon(Heroicon::OutlinedUserGroup),
+                    OpenCycleTwo::make()->icon(Heroicon::OutlinedLockOpen),
+                    EditAction::make(),
+                ])->label('More')->tooltip('More actions'),
             ])
             ->recordUrl(fn (Programme $record) => ProgrammeResource::getUrl('view', ['record' => $record]))
             ->toolbarActions([

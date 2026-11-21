@@ -65,23 +65,6 @@ class StudentAccounts
         }, 5);
     }
 
-    public function availableInvitation(string $token): StudentInvitation
-    {
-        $invitation = StudentInvitation::where('token_hash', hash('sha256', $token))->first();
-        $this->checkInvitation($invitation);
-
-        return $invitation;
-    }
-
-    public function checkInvitation(?StudentInvitation $invitation): void
-    {
-        if (! $invitation || $invitation->used_at || $invitation->expires_at->isPast()
-            || ! User::whereKey($invitation->teacher_id)->where('role', 'teacher')->exists()
-            || ! Programme::whereKey($invitation->programme_id)->where('teacher_id', $invitation->teacher_id)->exists()) {
-            throw ValidationException::withMessages(['invitation' => 'This invitation is unavailable or expired. Ask your teacher for a new invitation.']);
-        }
-    }
-
     public function finishVerified(SignupChallenge $challenge, array $data): User
     {
         return DB::transaction(function () use ($challenge, $data) {
@@ -102,13 +85,8 @@ class StudentAccounts
                     throw ValidationException::withMessages(['email' => 'This account is already complete.']);
                 }
             } else {
-                $invitation = StudentInvitation::whereKey($challenge->invitation_id)->lockForUpdate()->first();
-                $this->checkInvitation($invitation);
-                $programme = Programme::whereKey($invitation->programme_id)->lockForUpdate()->firstOrFail();
-                $this->checkInvitation($invitation);
-                $student = $this->newStudent(User::findOrFail($invitation->teacher_id), $data['category'], $data['password']);
-                $programme->students()->attach($student);
-                $invitation->update(['used_at' => now(), 'used_by' => $student->id]);
+                // Self-registered students start without a teacher; joining a programme links them (see ProgrammeInvitations).
+                $student = $this->newStudent(null, $data['category'], $data['password']);
             }
             $student->forceFill([
                 'email' => $challenge->email, 'email_verified_at' => $challenge->verified_at,
@@ -148,11 +126,11 @@ class StudentAccounts
         Validator::make(compact('category', 'password'), ['category' => 'required|in:G,B', 'password' => 'required|string|min:12|max:200'])->validate();
     }
 
-    private function newStudent(User $teacher, string $category, string $password): User
+    private function newStudent(?User $teacher, string $category, string $password): User
     {
         $code = $this->allocate($category);
 
-        return User::create(['name' => $code, 'email' => null, 'student_code' => $code, 'category' => $category, 'password' => $password, 'role' => 'student', 'teacher_id' => $teacher->id]);
+        return User::create(['name' => $code, 'email' => null, 'student_code' => $code, 'category' => $category, 'password' => $password, 'role' => 'student', 'teacher_id' => $teacher?->id]);
     }
 
     private function allocate(string $category): string

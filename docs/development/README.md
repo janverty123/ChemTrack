@@ -54,7 +54,7 @@ It invokes two real registration processes against disposable, prefix-isolated t
 
 ## Setup on another computer
 
-Install PHP 8.3+ with required Laravel extensions plus intl/zip, Composer, Node and pnpm/npm, and a compatible MySQL/MariaDB server. Run `composer install` and `pnpm install --frozen-lockfile` (or establish an npm lockfile if choosing npm). Copy `.env.example` to `.env`, supply a dedicated database/user, generate an application key with `php artisan key:generate`, then run `php artisan migrate`, `php artisan chemtrack:demo`, and `pnpm run build`. Use `php artisan serve --host=127.0.0.1` for a local preview. Fresh-machine setup is documented but has not been tested on a second machine.
+Install PHP 8.3+ with required Laravel extensions plus intl/zip, Composer, Node and pnpm/npm, and a compatible MySQL/MariaDB server. Run `composer install` and `pnpm install --frozen-lockfile` (or establish an npm lockfile if choosing npm). Copy `.env.example` to `.env`, supply a dedicated database/user, generate an application key with `php artisan key:generate`, then run `php artisan migrate`, `php artisan chemtrack:demo`, and `pnpm run build`. Use `php artisan serve --host=127.0.0.1` for a local preview. Fresh-machine setup was tested on a second Windows computer on 21 November with user-local PHP 8.4, Composer, pnpm and portable MariaDB 10.11 (no XAMPP). On a fresh machine, create the ignored `.local/site-update` folder before running `tests/Integration/coded-registration-race.php`.
 
 Dependency assets can be republished with `php artisan filament:assets`; they are generated and ignored in version control. Real hosting requirements, TLS, secure cookies, backups/restore, student-data retention and deployment remain to be verified before any live use.
 

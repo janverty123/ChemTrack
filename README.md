@@ -2,7 +2,9 @@
 
 ChemTrack is a chemistry remediation and progress-tracking web application for students learning at home at their own pace, with a teacher dashboard for content, assessments, progress, and research results.
 
-**Status:** deployment-ready source with a new visual identity. Not yet deployed to a host. Last context update: **12 November 2026 (Asia/Manila)**.
+**Status:** deployment-ready source with a new visual identity. Not yet deployed to a host. Last context update: **21 November 2026 (Asia/Manila)**.
+
+**Latest change (21 November):** students now sign up on their own, with no teacher invitation. Teachers invite a class to a programme with a reusable invitation code or link (programme page → **Invite students**). Students join from their learning path. See decision D060 and the [session log](docs/context/session-log.md). Checks: 111 tests / 805 assertions, 27 frontend checks, build, MariaDB rehearsals and a live signup-to-join walk-through. A follow-up pass the same day fixed misaligned and overflowing buttons on the sign-in, teacher dashboard, programme and report pages (browser-checked at desktop and phone widths).
 
 **Latest verification (4 November):** the auth/theme refinement passed **96 application tests / 697 assertions**, **33 frontend checks**, Pint and the Vite build. Actual HTTP teacher/student sign-in/workspace/settings/report/signup/recovery checks passed. Browser viewing is disabled in Work settings, so this update has no fresh visual/mobile validation. See [auth/theme evidence](docs/development/auth-theme-refinement.md); earlier [cycle/account evidence](docs/development/cycle-accounts-settings-evidence.md) remains historical.
 
@@ -16,7 +18,7 @@ Open the [GitHub web editor](https://github.dev/janverty123/ChemTrack), sign in,
 
 **Latest work:** public/account entry pages now default to the original light theme; customization applies after sign-in. Shared sign-in/right and signup/left layouts include top-left Back controls, floating labels, individual in-field password toggles and progressive panel transitions. Account theme preferences, cycle gates, private identities and existing histories/credentials remain preserved.
 
-**Latest request:** prepare the complete site source for the GitHub repository so it can be edited from a phone. The source snapshot includes the Laravel app, frontend assets, migrations, dependency lockfiles, tests and setup documentation. Local environment files, credentials, databases and uploads are excluded. Signup uses a teacher invitation to choose the programme, then email verification and private details; there is no manual approval queue. Teacher self-registration is not implemented; teacher accounts are maintainer-provisioned. Next: review the local forms visually. Real inbox verification still needs a mail sender (`log` currently), and real Google Forms verification/materials are not connected. See [mail and account setup](docs/development/mail-and-account-readiness.md).
+**Latest request:** prepare the complete site source for the GitHub repository so it can be edited from a phone. The source snapshot includes the Laravel app, frontend assets, migrations, dependency lockfiles, tests and setup documentation. Local environment files, credentials, databases and uploads are excluded. Signup is open to students: email verification, then private details. There is no manual approval queue. Students then join programmes with the teacher's invitation code (updated 21 November). Teacher self-registration is not implemented; teacher accounts are maintainer-provisioned. Next: review the local forms visually. Real inbox verification still needs a mail sender (`log` currently), and real Google Forms verification/materials are not connected. See [mail and account setup](docs/development/mail-and-account-readiness.md).
 
 | Document | Purpose |
 | --- | --- |
@@ -58,8 +60,8 @@ Open the [GitHub web editor](https://github.dev/janverty123/ChemTrack), sign in,
 
 ## Current application
 
-- **Students:** invited staged email verification precedes private name/LRN/password signup and automatic G/B code assignment. Each cycle has its own four-stage total and activity list; module assessments, reading coverage, completion and scores remain distinct. Existing legacy/demo access is preserved during the controlled account-completion rollout.
-- **Teachers:** own programme/student management, setup/eligible/waiting counts and explicit Cycle 2 release. Students still need completed Cycle 1. New programmes require complete cycle setup before publication; frozen content/history remains protected. Reports/CSV show separate cycle totals and stage status, identified by code.
+- **Students:** open staged signup (email verification, then private name/LRN/password) with automatic G/B code assignment. Students join a teacher's published programme with its reusable invitation code or link; the first programme joined links them to that teacher. Each cycle has its own four-stage total and activity list; module assessments, reading coverage, completion and scores remain distinct. Existing legacy/demo access is preserved during the controlled account-completion rollout.
+- **Teachers:** own programme/student management, a per-programme invitation code to copy, replace or turn off, setup/eligible/waiting counts and explicit Cycle 2 release. Students still need completed Cycle 1. New programmes require complete cycle setup before publication; frozen content/history remains protected. Reports/CSV show separate cycle totals and stage status, identified by code.
 - **Accounts/settings:** owner-only private profile/avatar, verified email changes, password recovery/change, sessions, light/dark/system, larger text/reduced motion and default cycle. Optional teacher MFA uses installed Filament authenticator/recovery components.
 - **Resilience/integrity:** server permissions and stage eligibility, confirmed saving/retry/resume, immutable submitted native answers/scores and duplicate-safe finalization remain. Internet is required.
 
@@ -111,6 +113,6 @@ The “ChemTrack Recommendation” chat preferred Z.com Starter and discussed Z.
 
 After each prompt, update this README's status/date/next step as needed, synchronize [current context](docs/context/current.md), and append a concise outcome to [the session log](docs/context/session-log.md). Record durable changes in the decision log. Keep sensitive information and student records out of these files. This is a working convention enforced through `AGENTS.md`, not a background automation.
 
-**Next step (12 November):** choose a PHP/MySQL host and follow the [deployment guide](docs/deployment.md). Create the first teacher with `php artisan chemtrack:create-teacher`, and connect a real mail sender before inviting students.
+**Next step (21 November):** choose a PHP/MySQL host and follow the [deployment guide](docs/deployment.md). Create the first teacher with `php artisan chemtrack:create-teacher`, and connect a real mail sender before inviting students.
 
 **Earlier next step:** review locally via [Teacher](http://127.0.0.1:8002/teacher) and [Settings](http://127.0.0.1:8002/settings). Configure/test an approved mail sender before real signups, supply the approved materials and Forms connection, then complete visual/phone/accessibility/load/restore checks. No hosting or deployment was performed.

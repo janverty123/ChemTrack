@@ -390,3 +390,19 @@ Request: make each cycle's progress independent (each has its own pre-test, modu
 Cause of the sign-in failure: signing out from the teacher panel led to Filament's separate `/teacher/login`, where students can never sign in and which has its own rate limit. That page is now reachable only for the teacher two-factor step; everyone else is sent to `/login`.
 
 Work: cycle-only activity lists and rings, required cycle field, new demo data (two full cycles, coded students ST1-G and ST1-B), rewritten settings copy, `/` redirect for signed-in users, remember-me, and a Filament logout redirect. Checks: 107 tests / 754 assertions, 27 frontend checks, build passed; the browser flow (student sign-in by code, both cycles, teacher sign-out and sign-in again) passed.
+
+## 21 November 2026 — Local setup on a new computer; open signup with programme invitation codes
+
+Request 1: copy the GitHub repository to this computer and install what is needed to test and run it. Work: cloned to `C:\proj\ChemTrack`; installed user-local PHP 8.4, Composer, pnpm and portable MariaDB 10.11 (no XAMPP on this machine), created a scoped local database and fictional demo data. This is the first tested fresh-machine setup. Checks: 107 tests / 754 assertions, 27 frontend checks, build, MariaDB freeze regression and live HTTP pages passed.
+
+Request 2: let students register on their own, without a teacher invitation, and put the invitation in the programme for students to join. Work: signup now asks only for email, then verification and private details, and still assigns a G/B code. Each programme has one reusable invitation code and `/join?code=` link (teacher: programme page → Invite students → copy, new code, or turn joining off/on). Students join from their learning path or the link; a guest's link is remembered through signup or sign-in. Only published programmes accept joins. The first programme joined links the student to that teacher; another teacher's code is refused. Removed the one-use per-student invitation pages. See D060.
+
+Checks: 111 tests / 805 assertions (new `ProgrammeInvitationTest`), 27 frontend checks, Pint, Vite build, both MariaDB rehearsals (the race rehearsal needed the ignored `.local/site-update` folder on this machine) and a live HTTP walk-through: invitation link → signup → verify → details → join → programme on the learning path. Not done: visual browser review of the new teacher modal and join page; multi-teacher students remain unsupported by design.
+
+## 21 November 2026 — Button and alignment clean-up
+
+Request: clean up awkward, misaligned buttons. Reviewed public, student and teacher pages in a browser at 1280 px and 390 px. Fixed: full-width sign-in/sign-up buttons now centre their label (the final signup button had its text stuck to the left); Account security gets a sidebar icon so it lines up with the other items; the dashboard "Open Cycle 2" button sits at the right of its strip; the programmes table keeps "Open" and moves the other row actions into a ⋮ menu (the row previously overflowed and cut off "Student progress"); programme page header has one primary action with outlined, icon-labelled secondary actions; the "Available to enrolled students" switch now sits under its label beside the Title field; the Invite students window is narrower with copy icons and neutral buttons; Students table actions share one colour; report table cells are vertically centred and no longer widen hyphens (ST1-G showed as "ST1 - G"). Checks: 111 tests / 805 assertions, 27 frontend checks, Pint, build, and browser re-checks of each fixed page.
+
+## 21 November 2026 — Restart and push
+
+Request: run the site again after the computer restarted, then push this work to GitHub. Restarted the local database and site on port 8000; data was intact. Committed the open-signup/programme-invitation work and the button clean-up to `main` and pushed it to the GitHub repository. No deployment was performed.

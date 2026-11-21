@@ -39,7 +39,7 @@ class SessionController extends Controller
 
         $user = $request->user();
 
-        return redirect($user->role === 'teacher' ? '/teacher' : ($user->registration_required && (! $user->account_completed_at || ! $user->email_verified_at) ? '/account/complete' : '/learn'));
+        return redirect($user->role === 'teacher' ? '/teacher' : ($user->registration_required && (! $user->account_completed_at || ! $user->email_verified_at) ? '/account/complete' : ($request->session()->has(JoinProgrammeController::PENDING_CODE) ? '/join' : '/learn')));
     }
 
     public function destroy(Request $request)

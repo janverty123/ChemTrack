@@ -51,6 +51,7 @@
             </div>
         </section>
     @empty
-        <section class="empty-state"><h2>Your learning path will appear here.</h2><p>Ask your teacher to enroll you in a published programme to get started.</p></section>
+        <section class="empty-state"><h2>Your learning path will appear here.</h2><p>Join your teacher's programme with the invitation code they shared with your class.</p><p><a class="button" href="{{ route('programmes.join') }}">Join a programme</a></p></section>
     @endforelse
+    @if($programmes->isNotEmpty())<p class="help-text"><a href="{{ route('programmes.join') }}">Join another programme</a> with an invitation code from your teacher.</p>@endif
 </x-workspace>

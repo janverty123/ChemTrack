@@ -37,22 +37,21 @@ class RegistrationController extends Controller
                 return redirect('/settings');
             }
         }
-        if (! $request->boolean('restart') && ! $request->has('invitation') && ($challenge = $this->challenge($request))) {
+        if (! $request->boolean('restart') && ($challenge = $this->challenge($request))) {
             return redirect($this->base($request).($challenge->verified_at && ! $challenge->expires_at->isPast() ? '/profile' : '/verify'));
         }
 
-        return $this->page('auth.register', ['invitation' => $request->query('invitation', ''), 'base' => $this->base($request)]);
+        return $this->page('auth.register', ['base' => $this->base($request), 'joining' => $request->session()->has(JoinProgrammeController::PENDING_CODE)]);
     }
 
-    public function store(Request $request, StudentAccounts $accounts)
+    public function store(Request $request)
     {
         $completion = $this->base($request) !== '/register';
         if ($completion) {
             abort_unless($request->user()->role === 'student' && ! $request->user()->account_completed_at, 403);
         }
-        $data = $request->validate(['email' => 'required|email:rfc|max:254', 'invitation' => $completion ? 'nullable' : 'required|string|max:200']);
+        $data = $request->validate(['email' => 'required|email:rfc|max:254']);
         $email = strtolower(trim($data['email']));
-        $invitation = $completion ? null : $accounts->availableInvitation($data['invitation']);
         if (User::where('email', $email)->when($completion, fn ($query) => $query->where('id', '!=', $request->user()->id))->exists()) {
             throw ValidationException::withMessages(['email' => 'This email cannot be used. Sign in or ask your teacher for help.']);
         }
@@ -61,7 +60,7 @@ class RegistrationController extends Controller
         $binding = Str::random(64);
         $code = (string) random_int(100000, 999999);
         $challenge = SignupChallenge::create([
-            'id' => (string) Str::uuid(), 'invitation_id' => $invitation?->id,
+            'id' => (string) Str::uuid(),
             'user_id' => $completion ? $request->user()->id : null,
             'email' => $email, 'session_hash' => hash('sha256', $binding), 'code_hash' => Hash::make($code),
             'sent_at' => now(), 'expires_at' => now()->addMinutes(10),
@@ -205,6 +204,6 @@ class RegistrationController extends Controller
         $request->session()->forget(['signup_challenge', 'signup_binding']);
         $request->session()->regenerate();
 
-        return redirect('/learn')->with('status', 'Your student code is '.$student->studentReference().'. Keep it for future sign-ins.');
+        return redirect($request->session()->has(JoinProgrammeController::PENDING_CODE) ? '/join' : '/learn')->with('status', 'Your student code is '.$student->studentReference().'. Keep it for future sign-ins.');
     }
 }

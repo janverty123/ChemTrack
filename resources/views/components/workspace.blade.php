@@ -6,7 +6,7 @@
     $navigation = $public ? [] : array_values(array_filter([
         ['href' => $dashboardUrl, 'label' => $isTeacher ? 'Dashboard' : 'My learning path', 'icon' => 'path', 'active' => request()->is('learn*') || request()->is('teacher')],
         $isTeacher ? ['href' => '/teacher/programmes', 'label' => 'Programmes', 'icon' => 'book', 'active' => request()->is('teacher/programmes*')] : null,
-        $isTeacher ? ['href' => '/teacher/users', 'label' => 'Students', 'icon' => 'people', 'active' => request()->is('teacher/users*', 'teacher/student-invitations*')] : null,
+        $isTeacher ? ['href' => '/teacher/users', 'label' => 'Students', 'icon' => 'people', 'active' => request()->is('teacher/users*')] : null,
         ['href' => '/settings', 'label' => 'Settings', 'icon' => 'gear', 'active' => request()->is('settings*')],
     ]));
     $icons = [

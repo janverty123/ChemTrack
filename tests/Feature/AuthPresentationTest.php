@@ -35,10 +35,12 @@ class AuthPresentationTest extends TestCase
         }
     }
 
-    public function test_registration_explains_invitation_and_does_not_offer_public_teacher_role_creation(): void
+    public function test_registration_is_open_without_invitation_and_does_not_offer_public_teacher_role_creation(): void
     {
         $this->get('/register')->assertOk()
+            ->assertSee('Any student can create an account')
             ->assertSee('There is no separate approval step after signup.')
+            ->assertDontSee('name="invitation"', false)
             ->assertSee('Teacher accounts are set up by the ChemTrack project maintainer.')
             ->assertDontSee('name="role"', false)
             ->assertDontSee('name="password"', false);

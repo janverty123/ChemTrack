@@ -25,7 +25,7 @@ class UsersTable
             ])
             ->recordActions([
                 ViewAction::make()->label('Progress'),
-                EditAction::make()->label('Manage account'),
+                EditAction::make()->label('Manage account')->color('gray'),
             ])
             ->recordUrl(fn (User $record) => UserResource::getUrl('view', ['record' => $record]))
             ->toolbarActions([

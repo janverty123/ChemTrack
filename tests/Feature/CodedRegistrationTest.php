@@ -47,7 +47,7 @@ class CodedRegistrationTest extends TestCase
         $student = $accounts->create($otherTeacher, 'G', 'synthetic-password');
         $this->assertSame('ST2-G', $student->studentReference());
         $this->get('/register')->assertOk()->assertDontSee('name="password"', false)->assertSee('name="email"', false);
-        $this->post('/register', ['invitation' => $accounts->invite($teacher, $programme->id), 'category' => 'G', 'password' => 'synthetic-password', 'password_confirmation' => 'synthetic-password'])->assertSessionHasErrors('email');
+        $this->post('/register', ['category' => 'G', 'password' => 'synthetic-password', 'password_confirmation' => 'synthetic-password'])->assertSessionHasErrors('email');
         $this->assertSame(3, User::where('role', 'student')->count());
     }
 
@@ -58,12 +58,16 @@ class CodedRegistrationTest extends TestCase
         $token = $accounts->invite($teacher, $this->programme($teacher)->id);
         $accounts->register($token, 'B', 'synthetic-password');
         $before = User::count();
-        foreach ([$token, 'unknown-token'] as $invalid) {
-            $this->post('/register', ['invitation' => $invalid, 'email' => 'synthetic@example.test'])->assertSessionHasErrors('invitation');
-        }
         $expired = $accounts->invite($teacher, $this->programme($teacher)->id);
         StudentInvitation::where('token_hash', hash('sha256', $expired))->update(['expires_at' => now()->subMinute()]);
-        $this->post('/register', ['invitation' => $expired, 'email' => 'synthetic@example.test'])->assertSessionHasErrors('invitation');
+        foreach ([$token, 'unknown-token', $expired] as $invalid) {
+            try {
+                $accounts->register($invalid, 'G', 'synthetic-password');
+                $this->fail('An unavailable invitation must not create an account.');
+            } catch (ValidationException $exception) {
+                $this->assertArrayHasKey('invitation', $exception->errors());
+            }
+        }
         $this->assertSame($before, User::count());
         $this->assertSame(0, DB::table('student_code_counters')->where('category', 'G')->value('last_number'));
     }
@@ -81,23 +85,6 @@ class CodedRegistrationTest extends TestCase
         $this->post('/login', ['email' => $legacy->email, 'password' => 'password'])->assertRedirect('/learn');
         $this->assertAuthenticatedAs($legacy);
         $this->assertSame('Learner '.$legacy->id, $legacy->studentReference());
-    }
-
-    public function test_invitation_issuance_is_teacher_owned_hashed_and_shown_once(): void
-    {
-        $teacher = User::factory()->create(['role' => 'teacher']);
-        $other = User::factory()->create(['role' => 'teacher']);
-        $programme = $this->programme($teacher);
-        $this->actingAs($other)->post('/teacher/student-invitations', ['programme_id' => $programme->id])->assertForbidden();
-        $this->actingAs($teacher)->post('/teacher/student-invitations', ['programme_id' => $programme->id])->assertRedirect('/teacher/student-invitations/created');
-        $url = session('student_invitation_url');
-        parse_str(parse_url($url, PHP_URL_QUERY), $query);
-        $this->assertDatabaseHas('student_invitations', ['token_hash' => hash('sha256', $query['invitation']), 'teacher_id' => $teacher->id, 'programme_id' => $programme->id]);
-        $this->assertStringNotContainsString($query['invitation'], StudentInvitation::firstOrFail()->toJson());
-        $this->get('/teacher/student-invitations/created')->assertOk()->assertSee(e($url), false)->assertHeader('Cache-Control', 'no-store, private');
-        $this->get('/teacher/student-invitations/created')->assertRedirect('/teacher/student-invitations');
-        $student = User::factory()->create(['role' => 'student']);
-        $this->actingAs($student)->post('/teacher/student-invitations', ['programme_id' => $programme->id])->assertForbidden();
     }
 
     public function test_teacher_creates_coded_student_and_resets_only_own_student_password(): void
@@ -141,11 +128,24 @@ class CodedRegistrationTest extends TestCase
         $teacher = User::factory()->create(['role' => 'teacher']);
         $other = User::factory()->create(['role' => 'teacher']);
         $programme = $this->programme($teacher);
-        $token = app(StudentAccounts::class)->invite($teacher, $programme->id);
-        $this->post('/register', ['invitation' => $token, 'category' => 'teacher', 'password' => 'short', 'password_confirmation' => 'short'])->assertSessionHasErrors('email');
+        $accounts = app(StudentAccounts::class);
+        $token = $accounts->invite($teacher, $programme->id);
+        foreach ([['teacher', 'synthetic-password', 'category'], ['G', 'short', 'password']] as [$category, $password, $field]) {
+            try {
+                $accounts->register($token, $category, $password);
+                $this->fail('Invalid account details must be rejected.');
+            } catch (ValidationException $exception) {
+                $this->assertArrayHasKey($field, $exception->errors());
+            }
+        }
         $this->assertNull(StudentInvitation::firstOrFail()->used_at);
         $programme->update(['teacher_id' => $other->id]);
-        $this->post('/register', ['invitation' => $token, 'email' => 'synthetic@example.test'])->assertSessionHasErrors('invitation');
+        try {
+            $accounts->register($token, 'G', 'synthetic-password');
+            $this->fail('A programme that changed owner must not accept the old invitation.');
+        } catch (ValidationException $exception) {
+            $this->assertArrayHasKey('invitation', $exception->errors());
+        }
         $this->assertSame(0, User::where('role', 'student')->count());
         $this->assertNull(StudentInvitation::firstOrFail()->used_at);
     }

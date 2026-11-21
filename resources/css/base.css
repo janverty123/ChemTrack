@@ -118,8 +118,7 @@
 table { width: 100%; border-collapse: collapse; text-align: left; font-size: .9rem; }
 caption { text-align: left; font: 650 1.05rem/1.3 var(--font-display); padding: 20px 20px 14px; }
 th { font-size: .75rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--c-muted); background: var(--c-surface-2); }
-th, td { padding: 14px 20px; border-top: 1px solid var(--c-line); vertical-align: top; min-width: 120px; }
-td { font-variant-numeric: tabular-nums; }
+th, td { padding: 14px 20px; border-top: 1px solid var(--c-line); vertical-align: middle; min-width: 120px; }
 .table-sub { display: block; font-size: .8rem; color: var(--c-muted); }
 .attempt-line { font-size: .875rem; margin-bottom: 4px; }
 

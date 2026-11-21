@@ -1,6 +1,8 @@
 # Current context
 
-Updated: 12 November 2026, Asia/Manila.
+Updated: 21 November 2026, Asia/Manila.
+
+**21 November — open signup and programme invitation codes.** Students now create accounts on their own (email verification, private details, G/B code) with no teacher invitation. Each programme has a reusable invitation code and link that the teacher copies, replaces or turns off from the programme page (Invite students); students join from their learning path or the link, and only published programmes accept joins. The first programme a student joins links them to that teacher; another teacher's code is refused (single-teacher rosters, D060). One-use per-student invitation pages were removed. The project now also runs on a second computer with user-local PHP 8.4, Composer, pnpm and portable MariaDB 10.11 instead of XAMPP. 111 tests / 805 assertions, 27 frontend checks, build, MariaDB rehearsals and a live signup-to-join walk-through pass. A follow-up layout pass the same day fixed misaligned or overflowing buttons across sign-in, the teacher dashboard, programmes table, programme page, Invite students window and progress report (see session log). Next: continue with hosting and a real mail sender.
 
 **12 November — deployment-ready redesign.** New visual identity (logo, cobalt/lime tokens, Bricolage Grotesque + Inter, full dark mode), rewritten landing page, restyled public, student, teacher and error pages, and production hardening (rate limits, proxies, security headers, `chemtrack:create-teacher`, deployment guide). 102 tests / 737 assertions and 27 frontend checks pass; build and audit are clean. Next: pick a host and follow [deployment](../deployment.md). Configure a real mail sender, create the teacher account, and add the approved module, video and Forms materials before real students join. Real-phone and screen-reader checks are still pending.
 

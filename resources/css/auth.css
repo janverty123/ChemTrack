@@ -46,7 +46,7 @@
 .auth-steps .is-done > span { background: var(--c-primary); border-color: var(--c-primary); color: var(--c-on-primary); }
 
 .auth-form { gap: 18px; }
-.auth-form > .button { width: 100%; min-height: 52px; margin-top: 4px; justify-content: space-between; padding: 12px 20px; font-size: 1rem; }
+.auth-form > .button { width: 100%; min-height: 52px; margin-top: 4px; justify-content: center; padding: 12px 20px; font-size: 1rem; }
 .auth-form-links { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: -6px; font-size: .875rem; }
 .auth-remember { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; font-weight: 500; color: var(--c-muted); cursor: pointer; }
 .auth-form-links a, .auth-bottom-link a, .auth-help a { font-weight: 600; }

@@ -2,8 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\Programme;
-use App\Models\StudentInvitation;
 use App\Models\User;
 use App\Notifications\SignupCode;
 use App\Services\StudentAccounts;
@@ -20,18 +18,10 @@ class VerifiedRegistrationTest extends TestCase
 {
     use RefreshDatabase;
 
-    private function invitation(): string
-    {
-        $teacher = User::factory()->create(['role' => 'teacher']);
-        $programme = Programme::create(['teacher_id' => $teacher->id, 'title' => 'Synthetic programme']);
-
-        return app(StudentAccounts::class)->invite($teacher, $programme->id);
-    }
-
-    private function begin(?string $token = null, string $email = 'synthetic@example.test'): string
+    private function begin(string $email = 'synthetic@example.test'): string
     {
         Notification::fake();
-        $this->post('/register', ['invitation' => $token ?? $this->invitation(), 'email' => $email])->assertRedirect('/register/verify');
+        $this->post('/register', ['email' => $email])->assertRedirect('/register/verify');
 
         return Notification::sent(new AnonymousNotifiable, SignupCode::class)->last()->code;
     }
@@ -41,11 +31,10 @@ class VerifiedRegistrationTest extends TestCase
         return array_replace(['full_name' => 'Synthetic Student', 'lrn' => '123456789012', 'category' => 'G', 'password' => 'synthetic-password', 'password_confirmation' => 'synthetic-password'], $changes);
     }
 
-    public function test_email_is_verified_before_atomic_private_profile_and_enrollment(): void
+    public function test_email_is_verified_before_atomic_private_profile_without_teacher_invitation(): void
     {
         $code = $this->begin();
         $this->assertSame(0, User::where('role', 'student')->count());
-        $this->assertNull(StudentInvitation::first()->used_at);
         $this->get('/register/verify')->assertOk()->assertDontSee($code)->assertSee('s•••@example.test');
         $stored = DB::table('signup_challenges')->first();
         $this->assertNotSame($code, $stored->code_hash);
@@ -62,8 +51,9 @@ class VerifiedRegistrationTest extends TestCase
         $this->assertNotNull($student->account_completed_at);
         $this->assertStringNotContainsString('123456789012', DB::table('users')->where('id', $student->id)->value('private_identity'));
         $this->assertStringNotContainsString('Synthetic Student', $student->toJson());
-        $this->assertDatabaseHas('programme_user', ['user_id' => $student->id]);
-        $this->assertNotNull(StudentInvitation::first()->used_at);
+        $this->assertNull($student->teacher_id);
+        $this->assertDatabaseMissing('programme_user', ['user_id' => $student->id]);
+        $this->get('/learn')->assertOk()->assertSee('Join a programme');
         $this->post('/logout');
         $this->post('/register/profile', $this->profile())->assertRedirect('/register/verify');
         $this->assertSame(1, User::where('role', 'student')->count());
@@ -80,7 +70,7 @@ class VerifiedRegistrationTest extends TestCase
         $this->assertSame(5, DB::table('signup_challenges')->first()->failed_attempts);
         $this->travel(11)->minutes();
         $this->post('/register/verify', ['code' => $code])->assertSessionHasErrors('code');
-        $this->assertNull(StudentInvitation::first()->used_at);
+        $this->assertSame(0, User::where('role', 'student')->count());
     }
 
     public function test_resend_waits_sixty_seconds_and_invalidates_old_code(): void
@@ -105,16 +95,6 @@ class VerifiedRegistrationTest extends TestCase
         $this->assertSame(0, User::where('role', 'student')->count());
     }
 
-    public function test_invitation_and_identity_are_rechecked_at_final_creation(): void
-    {
-        $code = $this->begin();
-        $this->post('/register/verify', ['code' => $code]);
-        StudentInvitation::first()->update(['used_at' => now()]);
-        $this->post('/register/profile', $this->profile())->assertSessionHasErrors('invitation');
-        $this->assertSame(0, User::where('role', 'student')->count());
-        $this->assertSame(0, DB::table('student_code_counters')->where('category', 'G')->value('last_number'));
-    }
-
     public function test_duplicate_lrn_is_rejected_without_allocating_or_consuming(): void
     {
         $code = $this->begin();
@@ -122,11 +102,11 @@ class VerifiedRegistrationTest extends TestCase
         $this->post('/register/profile', $this->profile())->assertRedirect('/learn');
         $this->post('/logout');
         $this->travel(61)->seconds();
-        $code = $this->begin(null, 'second@example.test');
+        $code = $this->begin('second@example.test');
         $this->post('/register/verify', ['code' => $code]);
         $this->post('/register/profile', $this->profile())->assertSessionHasErrors('lrn');
-        $this->assertNull(StudentInvitation::latest('id')->first()->used_at);
         $this->assertSame(1, User::where('role', 'student')->count());
+        $this->assertSame(1, DB::table('student_code_counters')->where('category', 'G')->value('last_number'));
     }
 
     public function test_new_teacher_created_student_must_complete_account_and_keeps_its_code(): void
@@ -175,25 +155,24 @@ class VerifiedRegistrationTest extends TestCase
         $this->post('/register/verify', ['code' => $code])->assertSessionHasErrors('code');
         $this->travel(11)->minutes();
         $this->post('/register/profile', $this->profile())->assertRedirect('/register/verify');
-        $this->assertNull(StudentInvitation::first()->used_at);
+        $this->assertSame(0, User::where('role', 'student')->count());
     }
 
-    public function test_failed_final_enrollment_rolls_back_challenge_invitation_identity_and_counter(): void
+    public function test_failed_final_account_save_rolls_back_challenge_identity_and_counter(): void
     {
         $code = $this->begin();
         $this->post('/register/verify', ['code' => $code]);
-        DB::unprepared("CREATE TRIGGER refuse_verified_enrollment BEFORE INSERT ON programme_user BEGIN SELECT RAISE(ABORT, 'synthetic enrollment failure'); END");
+        DB::unprepared("CREATE TRIGGER refuse_verified_account BEFORE UPDATE OF identity_hash ON users BEGIN SELECT RAISE(ABORT, 'synthetic account failure'); END");
         $this->withoutExceptionHandling();
         try {
             $this->post('/register/profile', $this->profile());
-            $this->fail('Enrollment should fail.');
+            $this->fail('Account completion should fail.');
         } catch (QueryException $exception) {
-            $this->assertStringContainsString('synthetic enrollment failure', $exception->getMessage());
+            $this->assertStringContainsString('synthetic account failure', $exception->getMessage());
         } finally {
-            DB::unprepared('DROP TRIGGER refuse_verified_enrollment');
+            DB::unprepared('DROP TRIGGER refuse_verified_account');
         }
         $this->assertSame(0, User::where('role', 'student')->count());
-        $this->assertNull(StudentInvitation::first()->used_at);
         $this->assertNull(DB::table('signup_challenges')->first()->consumed_at);
         $this->assertSame(0, DB::table('student_code_counters')->where('category', 'G')->value('last_number'));
         $this->post('/register/profile', $this->profile())->assertRedirect('/learn');
@@ -214,7 +193,6 @@ class VerifiedRegistrationTest extends TestCase
         $this->post('/register/verify', ['code' => $code]);
         $this->post('/register/profile', $this->profile(['lrn' => 'wrong', 'full_name' => '', 'password_confirmation' => 'different']))->assertSessionHasErrors(['lrn', 'full_name', 'password']);
         $this->assertSame(0, User::where('role', 'student')->count());
-        $this->assertNull(StudentInvitation::first()->used_at);
     }
 
     public function test_identity_uniqueness_race_returns_recoverable_error_and_rolls_back(): void
@@ -228,7 +206,6 @@ class VerifiedRegistrationTest extends TestCase
             DB::unprepared('DROP TRIGGER synthetic_identity_race');
         }
         $this->assertSame(0, User::where('role', 'student')->count());
-        $this->assertNull(StudentInvitation::first()->used_at);
         $this->assertNull(DB::table('signup_challenges')->first()->consumed_at);
         $this->assertSame(0, DB::table('student_code_counters')->where('category', 'G')->value('last_number'));
     }
@@ -241,17 +218,16 @@ class VerifiedRegistrationTest extends TestCase
         $this->get('/register')->assertRedirect('/register/profile');
         $this->get('/register?restart=1')->assertOk()->assertSee('name="email"', false);
         $oldChallenge = session('signup_challenge');
-        $this->post('/register', ['invitation' => $this->invitation(), 'email' => 'changed@example.test'])->assertRedirect('/register/verify');
+        $this->post('/register', ['email' => 'changed@example.test'])->assertRedirect('/register/verify');
         $this->assertNotNull(DB::table('signup_challenges')->where('id', $oldChallenge)->value('consumed_at'));
         $this->post('/register/verify', ['code' => $code])->assertSessionHasErrors('code');
     }
 
     public function test_restarting_signup_cannot_bypass_shared_email_send_cooldown(): void
     {
-        $token = $this->invitation();
-        $code = $this->begin($token);
+        $code = $this->begin();
         $challenge = session('signup_challenge');
-        $this->post('/register', ['invitation' => $token, 'email' => 'SYNTHETIC@example.test'])->assertSessionHasErrors('email');
+        $this->post('/register', ['email' => 'SYNTHETIC@example.test'])->assertSessionHasErrors('email');
         $this->assertSame($challenge, session('signup_challenge'));
         Notification::assertSentOnDemandTimes(SignupCode::class, 1);
         $this->post('/register/verify', ['code' => $code])->assertRedirect('/register/profile');

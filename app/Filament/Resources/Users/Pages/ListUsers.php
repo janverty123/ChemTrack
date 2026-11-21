@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Users\Pages;
 
+use App\Filament\Resources\Programmes\ProgrammeResource;
 use App\Filament\Resources\Users\UserResource;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
@@ -15,7 +16,8 @@ class ListUsers extends ListRecords
     {
         return [
             CreateAction::make(),
-            Action::make('inviteStudent')->label('Create student invitation')->url('/teacher/student-invitations'),
+            Action::make('inviteStudents')->label('Invite students')->color('gray')->url(ProgrammeResource::getUrl())
+                ->tooltip('Open a programme and choose Invite students to share its code'),
         ];
     }
 }

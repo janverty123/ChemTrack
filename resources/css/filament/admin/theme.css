@@ -65,6 +65,9 @@ body.fi-body { background: var(--c-bg); color: var(--c-text); font-family: var(-
     padding: 12px 14px; border-radius: var(--radius); background: var(--c-surface-2);
 }
 .teacher-cycle-release p { margin: 0; font-size: .82rem; color: var(--c-muted); }
+/* Status text takes the free space so the button or state badge lines up with the row actions above. */
+.teacher-cycle-release > p:first-child { flex: 1 1 220px; }
+.teacher-cycle-release > p:not(:first-child) { flex-basis: 100%; }
 .teacher-small-button {
     display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 8px 14px;
     border: 1px solid var(--c-line-strong); border-radius: var(--radius-sm); background: var(--c-surface); color: var(--c-text);

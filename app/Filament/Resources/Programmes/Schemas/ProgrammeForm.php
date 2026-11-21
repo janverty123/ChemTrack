@@ -18,7 +18,8 @@ class ProgrammeForm
         return $schema
             ->components([
                 TextInput::make('title')->required()->maxLength(255),
-                Toggle::make('published')->label('Available to enrolled students')->default(false),
+                // Label above the switch, like the Title field beside it, so both fields line up.
+                Toggle::make('published')->label('Available to enrolled students')->inline(false)->default(false),
                 Textarea::make('description')->maxLength(3000)->columnSpanFull(),
                 Repeater::make('activities')->relationship(modifyRecordsUsing: fn ($records) => $records->each->makeVisible('questions'))->orderColumn('position')
                     ->label('Learning activities')->columnSpanFull()->minItems(1)->maxItems(40)->collapsible()

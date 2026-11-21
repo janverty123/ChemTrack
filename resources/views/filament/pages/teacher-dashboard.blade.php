@@ -26,10 +26,10 @@
                 @forelse($students as $student)
                     <a class="teacher-student-row" href="{{ \App\Filament\Resources\Users\UserResource::getUrl('view', ['record' => $student]) }}"><span class="teacher-student-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none"><circle cx="12" cy="8" r="3.5" stroke="currentColor" stroke-width="1.7"/><path d="M5 21v-2a7 7 0 0 1 14 0v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span><span><strong>{{ $student->studentReference() }}</strong><small>{{ $student->programmes_count }} {{ Str::plural('programme', $student->programmes_count) }}</small></span><span aria-hidden="true">→</span></a>
                 @empty
-                    <div class="teacher-empty"><h3>Your roster will appear here.</h3><p>Add a coded student account or create an invitation.</p></div>
+                    <div class="teacher-empty"><h3>Your roster will appear here.</h3><p>Students appear here after they join one of your programmes with its invitation code.</p></div>
                 @endforelse
             </div>
-            <div class="teacher-panel-footer"><a class="teacher-small-button" href="/teacher/student-invitations">Invite students</a></div>
+            <div class="teacher-panel-footer"><a class="teacher-small-button" href="{{ \App\Filament\Resources\Programmes\ProgrammeResource::getUrl() }}">Invite students</a></div>
         </section>
     </div>
 </x-filament-panels::page>

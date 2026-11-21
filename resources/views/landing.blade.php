@@ -40,7 +40,7 @@
                     <a class="button landing-cta" href="{{ $dashboardUrl }}">{{ $actionLabel }}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
                     <a class="secondary-button" href="#how">See how it works</a>
                 </div>
-                @guest<p class="landing-invite">Have an invitation from your teacher? <a href="/register">Create your student account</a></p>@endguest
+                @guest<p class="landing-invite">New student? <a href="/register">Create your student account</a>, then join your teacher's programme with their invitation code.</p>@endguest
             </div>
 
             <figure class="landing-product" aria-label="Example learning dashboard">
@@ -126,7 +126,7 @@
                 <span class="landing-audience-tag">Teachers</span>
                 <h3>See progress without chasing it</h3>
                 <ul class="landing-ticks">
-                    <li>{!! $check !!}Programmes, activities and student invitations in one place</li>
+                    <li>{!! $check !!}Programmes, activities and class invitation codes in one place</li>
                     <li>{!! $check !!}Reading, completion and scores kept separate</li>
                     <li>{!! $check !!}Release Cycle 2 when your class is ready</li>
                     <li>{!! $check !!}Export a spreadsheet-safe CSV report</li>

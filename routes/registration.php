@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\RegistrationController;
-use App\Http\Controllers\StudentInvitationController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -26,7 +25,4 @@ Route::middleware('auth')->group(function () {
     Route::post('/account/complete/resend', [RegistrationController::class, 'resend'])->middleware('throttle:5,1,complete-resend');
     Route::get('/account/complete/profile', [RegistrationController::class, 'profile']);
     Route::post('/account/complete/profile', [RegistrationController::class, 'finish'])->middleware('throttle:10,1,complete-profile');
-    Route::get('/teacher/student-invitations', [StudentInvitationController::class, 'create']);
-    Route::post('/teacher/student-invitations', [StudentInvitationController::class, 'store'])->middleware('throttle:20,1,invitations');
-    Route::get('/teacher/student-invitations/created', [StudentInvitationController::class, 'created']);
 });

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CycleReleaseController;
+use App\Http\Controllers\JoinProgrammeController;
 use App\Http\Controllers\LearningController;
 use App\Http\Controllers\ReadingProgressController;
 use App\Http\Controllers\ReportController;
@@ -18,8 +19,10 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [SessionController::class, 'store'])->middleware('throttle:login');
 });
 Route::post('/logout', [SessionController::class, 'destroy'])->middleware('auth');
+Route::get('/join', [JoinProgrammeController::class, 'show'])->middleware(EnsureCompletedAccount::class)->name('programmes.join');
 Route::middleware('auth')->group(function () {
     Route::middleware(EnsureCompletedAccount::class)->group(function () {
+        Route::post('/join', [JoinProgrammeController::class, 'store'])->middleware('throttle:20,1,join-programme');
         Route::get('/learn', [LearningController::class, 'index'])->name('learning.index');
         Route::get('/learn/activities/{activity}', [LearningController::class, 'show'])->name('learning.activity');
         Route::post('/learn/activities/{activity}/reading', [ReadingProgressController::class, 'store'])->middleware('throttle:120,1,reading');

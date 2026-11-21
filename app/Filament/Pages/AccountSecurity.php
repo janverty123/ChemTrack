@@ -2,10 +2,12 @@
 
 namespace App\Filament\Pages;
 
+use BackedEnum;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 
 class AccountSecurity extends Page
 {
@@ -14,6 +16,8 @@ class AccountSecurity extends Page
     protected static ?string $navigationLabel = 'Account security';
 
     protected static ?int $navigationSort = 99;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShieldCheck;
 
     protected string $view = 'filament.pages.account-security';
 
