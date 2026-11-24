@@ -17,6 +17,9 @@ class CreateProgramme extends CreateRecord
         try {
             parent::create($another);
         } catch (ValidationException $exception) {
+            // The publish check runs after the programme is created, so a rejection rolls the new
+            // record back. Forget it, or the next attempt would try to load a programme that no longer exists.
+            $this->record = null;
             $this->reportSaveError($exception);
 
             throw $exception;
