@@ -29,7 +29,8 @@ class ProgrammeForm
                         Select::make('cycle')->label('Cycle')->options([1 => 'Cycle 1', 2 => 'Cycle 2'])->required()->default(1)->helperText('Each cycle has its own pre-test, module, video lesson and post-test.'),
                         Select::make('type')->options(['lesson' => 'Lesson', 'pre_test' => 'Pre-test', 'checkpoint' => 'Module assessment', 'video' => 'Video lesson', 'post_test' => 'Post-test'])->required()->live()->default('lesson'),
                         Select::make('assessment_source')->label('Assessment format')->options(['native' => 'ChemTrack assessment', 'google_forms' => 'Google Forms'])->default('native')->required()->live()->visible(fn (Get $get) => in_array($get('type'), ['pre_test', 'post_test'])),
-                        TextInput::make('google_form_url')->label('Original Google Form link')->url()->startsWith('https://')->maxLength(2048)->visible(fn (Get $get) => in_array($get('type'), ['pre_test', 'post_test']) && $get('assessment_source') === 'google_forms')->helperText('Students open this form from their learning path.'),
+                        TextInput::make('google_form_url')->label('Original Google Form link')->url()->startsWith('https://')->maxLength(2048)
+                            ->regex('~^https://(?:docs\.google\.com/forms/|forms\.gle/)~')->validationMessages(['regex' => 'Use a Google Forms link that starts with https://docs.google.com/forms/ or https://forms.gle/.'])->visible(fn (Get $get) => in_array($get('type'), ['pre_test', 'post_test']) && $get('assessment_source') === 'google_forms')->helperText('Students open this form from their learning path.'),
                         Textarea::make('content')->label('Lesson text')->rows(7)->maxLength(30000)->visible(fn (Get $get) => $get('type') === 'lesson'),
                         FileUpload::make('document_path')->label('Optional module PDF')->disk('local')->directory(fn () => 'modules/teacher-'.auth()->id())->visibility('private')->preventFilePathTampering(allowFilePathUsing: fn (string $file): bool => auth()->user()?->role === 'teacher' && str_starts_with($file, 'modules/teacher-'.auth()->id().'/') && ! str_contains($file, '..'))->acceptedFileTypes(['application/pdf'])->maxSize(10240)->downloadable(false)->openable(false)->visible(fn (Get $get) => $get('type') === 'lesson')->helperText('PDF up to 10 MB. Original formatting is preserved.'),
                         TextInput::make('video_url')->label('Video link')->url()->startsWith('https://')->maxLength(2048)->required(fn (Get $get) => $get('type') === 'video')->visible(fn (Get $get) => in_array($get('type'), ['lesson', 'video'])),
@@ -38,9 +39,24 @@ class ProgrammeForm
                             ->schema([
                                 Textarea::make('prompt')->label('Question')->required()->maxLength(2000),
                                 Repeater::make('options')->simple(TextInput::make('option')->required()->maxLength(1000))->minItems(2)->maxItems(5)->defaultItems(3),
-                                Select::make('correct')->label('Correct option')->options([0 => 'Option 1', 1 => 'Option 2', 2 => 'Option 3', 3 => 'Option 4', 4 => 'Option 5'])->required()->helperText('Select an option that exists above.'),
+                                // Offer only the options that exist above, so an answer can never point at a missing option.
+                                Select::make('correct')->label('Correct option')->options(fn (Get $get): array => self::correctOptionChoices($get('options')))->required()->helperText('Options are numbered in the order listed above.'),
                             ]),
                     ]),
             ]);
+    }
+
+    /**
+     * @param  array<array-key, mixed>|null  $options
+     * @return array<int, string>
+     */
+    private static function correctOptionChoices(?array $options): array
+    {
+        $choices = [];
+        foreach (array_values($options ?? []) as $index => $option) {
+            $choices[$index] = 'Option '.($index + 1);
+        }
+
+        return $choices;
     }
 }
